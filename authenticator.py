@@ -76,4 +76,3 @@ class Authenticator:
             """
             create_user_data = [username, hashed_password, ssn]
             self.cursor.execute(create_user_query, create_user_data)
-            self.db.commit()

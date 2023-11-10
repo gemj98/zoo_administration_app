@@ -118,7 +118,7 @@ def render_vet_options():
             status = st.radio("Select health status", list(health_status))
 
             submit = st.button(
-                "Submit",
+                "Insert animal check",
                 on_click=lambda: handle_insert_animal_check(
                     cursor, animals[animal], health_status[status]
                 ),
