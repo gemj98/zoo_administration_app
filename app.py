@@ -2,7 +2,7 @@ import streamlit as st
 import mysql.connector
 import pandas as pd
 from authenticator import Authenticator
-from config.db_config import config as DBconfig
+from config import config as DBconfig
 import queries.vet_queries as vet
 
 import numpy as np

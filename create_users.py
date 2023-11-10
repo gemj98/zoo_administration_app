@@ -1,6 +1,6 @@
 from authenticator import Authenticator
 import mysql.connector
-from config.db_config import config as DBconfig
+from config import config as DBconfig
 
 db = mysql.connector.connect(**DBconfig)
 cursor = db.cursor()
