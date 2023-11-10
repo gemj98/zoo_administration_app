@@ -15,3 +15,4 @@ config = {
   
 - Run zoo_db_creation.sql to create the zoo database.
 - Run create_users.py to insert users into zoo database.
+- To run streamlit use: streamlit run app.py
