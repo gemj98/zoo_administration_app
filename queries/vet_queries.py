@@ -1,7 +1,7 @@
 from datetime import datetime
 import streamlit as st
 import pandas as pd
-from db_config import config as DBconfig
+from config import config as DBconfig
 
 
 def get_species_single(cursor):
