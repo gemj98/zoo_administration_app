@@ -6,13 +6,13 @@ USE zoo;
 
 CREATE TABLE employee (
     ssn CHAR(11) NOT NULL UNIQUE PRIMARY KEY,
-    name VARCHAR(50) NOT NULL,
+    Ename VARCHAR(50) NOT NULL,
     position VARCHAR(50) NOT NULL
 );
 
 # -------------  Tour & Tickets ----------------
 
-CREATE TABLE tour(tour_id INT auto_increment PRIMARY KEY, name VARCHAR(30), max_cap INT, guide_ssn	 CHAR(11),
+CREATE TABLE tour(tour_id INT auto_increment PRIMARY KEY, Tname VARCHAR(30), max_cap INT, guide_ssn	 CHAR(11),
 	FOREIGN KEY(guide_ssn) references employee(ssn) ON UPDATE CASCADE ON DELETE SET NULL);
 
 
@@ -22,7 +22,7 @@ CREATE TABLE ticket(ticket_id INT auto_increment PRIMARY KEY, class varchar(30),
 
 #-----------   Habitat, Specie & Animals   -------------
 
-CREATE TABLE habitat(habitat_id INT auto_increment PRIMARY KEY, name VARCHAR(30) NOT NULL UNIQUE,
+CREATE TABLE habitat(habitat_id INT auto_increment PRIMARY KEY, Hname VARCHAR(30) NOT NULL UNIQUE,
 	area REAL, population REAL, temperature REAL, manager_ssn CHAR(11), 
 	FOREIGN KEY(manager_ssn) references employee(ssn) ON UPDATE CASCADE ON DELETE SET NULL);
 
@@ -30,7 +30,7 @@ CREATE TABLE specie (specie_id INT auto_increment PRIMARY KEY, common_name VARCH
 	 diet VARCHAR(120), life_expectancy INT, avg_weight REAL, avg_size REAL, habitat_id INT,
 	 FOREIGN KEY(habitat_id) references habitat(habitat_id) ON UPDATE CASCADE ON DELETE SET NULL);
 
-CREATE TABLE animal (animal_id INT auto_increment PRIMARY KEY, name VARCHAR(30) NOT NULL UNIQUE, 
+CREATE TABLE animal (animal_id INT auto_increment PRIMARY KEY, Aname VARCHAR(30) NOT NULL UNIQUE, 
 	weight REAL, size REAL, health_status BOOLEAN, specie_id INT NOT NULL, 
     trainer_ssn CHAR(11), training_status BOOLEAN, 
     FOREIGN KEY(specie_id) references specie(specie_id) ON UPDATE CASCADE ON DELETE RESTRICT, 
@@ -49,7 +49,7 @@ CREATE TABLE meal_records(feeder_ssn CHAR(11), specie_id INT, record_date TIMEST
 	FOREIGN KEY(feeder_ssn) references employee(ssn) ON UPDATE CASCADE ON DELETE SET NULL, 
 	FOREIGN KEY(specie_id) references specie(specie_id) ON UPDATE CASCADE ON DELETE CASCADE);
 
-CREATE TABLE species_check(vet_ssn CHAR(11), specie_id INT, record_date TIMESTAMP, health_status varchar(300), 
+CREATE TABLE specie_check(vet_ssn CHAR(11), specie_id INT, record_date TIMESTAMP, health_status varchar(300), 
 	PRIMARY KEY(specie_id, record_date), 
 	FOREIGN KEY(vet_ssn) references employee(ssn) ON UPDATE CASCADE ON DELETE SET NULL, 
 	FOREIGN KEY(specie_id) references specie(specie_id) ON UPDATE CASCADE ON DELETE CASCADE);
@@ -78,7 +78,7 @@ DELIMITER ;
               
 # ----------  Tables for Veterinatian -----------------
               
-CREATE TABLE drug (drug_id INT auto_increment PRIMARY KEY, name VARCHAR(45), ingredients VARCHAR(200));
+CREATE TABLE drug (drug_id INT auto_increment PRIMARY KEY, Dname VARCHAR(45), ingredients VARCHAR(200));
 
 CREATE TABLE prescription (drug_id INT NOT NULL, animal_id INT NOT NULL, vet_ssn CHAR(11) NOT NULL, start_date DATE NOT NULL, end_date DATE, dose VARCHAR(300) NOT NULL,
                            PRIMARY KEY(drug_id, animal_id, start_date),
@@ -99,7 +99,7 @@ CREATE TABLE user (username VARCHAR(30) UNIQUE NOT NULL PRIMARY KEY, password VA
 -- 	area REAL, population REAL, temperature REAL, manager_ssn CHAR(11), 
 -- 	FOREIGN KEY(manager_ssn) references employee(ssn) ON UPDATE CASCADE ON DELETE SET NULL);
   
-INSERT INTO employee (ssn, name, position) values
+INSERT INTO employee (ssn, Ename, position) values
 	('867-43-6911', 'Helaine Halpine', 'trainer'),
 	('622-72-0793', 'Jereme Gunthorp', 'trainer'),
 	('628-43-7850', 'Pablo Tyers', 'habitat_manager'),
@@ -119,7 +119,7 @@ INSERT INTO employee (ssn, name, position) values
 	('697-84-7388', 'Clarice Loidl', 'trainer');
 */
   
-INSERT INTO habitat (name, area, temperature, manager_ssn) values 
+INSERT INTO habitat (Hname, area, temperature, manager_ssn) values 
 	('carivores', 195.4, 64, '628-43-7850'),
 	('herbivores', 250.7, 64, '628-43-7850'),
     ('reptiles', 80.7, 75, '362-78-0387'),
@@ -136,7 +136,7 @@ values ('lion', null, 'ground beef, beef femur', 15, 420, 44.4, 1),
     ('goldfish', 22, 'food pellets, algae wafers, brine shrimp', 12, 0.84, 4.5, 4),
     ('neon tetra', 15, 'food pellets, algae wafers, brine shrimp', 10, 0.23, 1.5, 4);
 
-INSERT INTO animal(specie_id, name, weight, size, health_status, trainer_ssn, training_status) values
+INSERT INTO animal(specie_id, Aname, weight, size, health_status, trainer_ssn, training_status) values
 # lions
 	(1, 'Simba', 451, 46.7, 1, '867-43-6911', 0),
 	(1, 'Zira', 405, 40.1, 0, null, null),
@@ -156,6 +156,19 @@ INSERT INTO animal(specie_id, name, weight, size, health_status, trainer_ssn, tr
 #banded iguana
 	(6, 'Luna', 0.4, 15, 0, null, null),
 	(6, 'Jasmine', 0.5, 23, 0, null, null);
+
+INSERT INTO drug(Dname, ingredients) values
+	('drug1', 'ingredient1, ingredient2'),
+	('drug2', 'ingredient3, ingredient4'),
+	('drug3', 'ingredient5, ingredient6');
+
+
+INSERT INTO prescription(drug_id, animal_id, vet_ssn, start_date, end_date, dose) values
+	(1, 1, '535-08-5848', current_timestamp(), '2023-11-25', 'One each morning'),
+	(2, 1, '535-08-5848', current_timestamp(), '2023-11-30', 'Two each morning'),
+	(3, 1, '535-08-5848', current_timestamp(), '2023-10-30', 'Two each morning'),
+	(3, 2, '535-08-5848', current_timestamp(), '2023-11-12', 'Three each morning'),
+	(3, 3, '535-08-5848', current_timestamp(), '2023-11-18', 'Four each morning');
     
 
 #INSERT INTO user(username, password) VALUES ("a","A"), ("b", "B"), ("c", "C");

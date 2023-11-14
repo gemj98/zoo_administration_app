@@ -30,7 +30,7 @@ class Authenticator:
                 print("Login succesful. Welcome {}.".format(username))
 
                 role_query = """
-                SELECT position, name , ssn FROM user NATURAL JOIN employee
+                SELECT position, Ename , ssn FROM user NATURAL JOIN employee
                 WHERE username=%s
                 """
                 role_data = [username]

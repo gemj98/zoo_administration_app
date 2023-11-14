@@ -50,6 +50,16 @@ def handle_insert_animal_check(cursor, animal_id, health_status):
     db.commit()
 
 
+def handle_insert_specie_check(cursor, specie_id, health_status):
+    vet.insert_specie_check(cursor, specie_id, health_status)
+    db.commit()
+
+
+def handle_insert_prescription(cursor, drug_id, animal_id, end_date, dose):
+    vet.insert_prescription(cursor, drug_id, animal_id, end_date, dose)
+    db.commit()
+
+
 def login_widget():
     username = st.text_input("Enter your username", key="user_input")
     password = st.text_input("Enter your password", key="pswd_input", type="password")
@@ -84,15 +94,17 @@ def render_vet_options():
         case "Home":
             greetings()
         case "Insert animal check":
-            # Select specie
             st.subheader("Insert animal check :turtle:")
+
+            # Select specie
             result = vet.get_species_single(cursor)
             species = dict(result)
             options = [word.capitalize() for word in list(species)]
-            specie = st.selectbox("Select a specie", options)
+            specie = st.selectbox("Select a specie", options).lower()
 
             # Select animal
-            result = vet.get_animals_from_specie(cursor, species[specie.lower()])
+            result = vet.get_animals_from_specie(cursor, species[specie])
+            print(result)
             animals = dict(result)
             options = list(animals)
             animal = st.selectbox("Select an animal", animals)
@@ -125,9 +137,100 @@ def render_vet_options():
             )
 
         case "Insert specie check":
-            st.write("Insert specie check")
+            st.subheader("Insert specie check :fish:")
+
+            # Select specie
+            result = vet.get_species_multiple(cursor)
+            species = dict(result)
+            print(species)
+            options = [word.capitalize() for word in list(species)]
+            specie = st.selectbox("Select a specie", options).lower()
+
+            # List past 5 health checks
+            result = vet.get_specie_checks_for_specie(cursor, species[specie])
+            df = pd.DataFrame(result, columns=["Record Date", "Health Status"])
+            st.write("Health check history")
+            st.dataframe(
+                df,
+                height=245,
+                column_config={
+                    "Health Status": st.column_config.CheckboxColumn(
+                        help="Select your **favorite** widgets",
+                        default=False,
+                    )
+                },
+                use_container_width=True,
+            )
+
+            # Select health_status
+            health_status = {"Healthy": 1, "Sick": 0}
+            status = st.radio("Select health status", list(health_status))
+
+            submit = st.button(
+                "Insert specie check",
+                on_click=lambda: handle_insert_specie_check(
+                    cursor, species[specie], health_status[status]
+                ),
+            )
         case "Insert a prescription":
-            st.write("Insert a prescription")
+            st.subheader("Create a prescription 💊")
+
+            # Select specie
+            result = vet.get_species_single(cursor)
+            species = dict(result)
+            options = [word.capitalize() for word in list(species)]
+            specie = st.selectbox("Select a specie", options).lower()
+
+            # Select animal
+            result = vet.get_animals_from_specie(cursor, species[specie])
+            animals = dict(result)
+            # options = list(animals)
+            animal = st.selectbox("Select an animal", animals)
+
+            # List past 5 health checks
+            result = vet.get_prescriptions_for_animal(cursor, animals[animal])
+            df = pd.DataFrame(
+                result,
+                columns=[
+                    "Active",
+                    "Drug",
+                    "Dose",
+                    "Start Date",
+                    "End Date",
+                    "Veterinarian",
+                ],
+            )
+            st.write("Prescription history")
+            st.dataframe(
+                df,
+                height=245,
+                use_container_width=True,
+                column_config={
+                    "Active": st.column_config.CheckboxColumn(
+                        help="Prescription is still active",
+                        default=False,
+                    )
+                },
+            )
+
+            # Select drug
+            result = vet.get_drugs(cursor)
+            drugs = dict(result)
+            # options = list(drugs)
+            drug = st.selectbox("Select a drug", drugs).lower()
+
+            # Input dose
+            dose = st.text_input("Write the dose", key="dose")
+
+            # Input end date
+            end_date = st.date_input("Select prescription's end date")
+
+            submit = st.button(
+                "Insert prescription",
+                on_click=lambda: handle_insert_prescription(
+                    cursor, drugs[drug], animals[animal], end_date, dose
+                ),
+            )
 
 
 def render_security_options():
