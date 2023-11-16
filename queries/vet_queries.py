@@ -1,7 +1,5 @@
 from datetime import datetime
 import streamlit as st
-import pandas as pd
-from config import config as DBconfig
 import mysql.connector
 import logging
 

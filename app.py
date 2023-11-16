@@ -4,13 +4,13 @@ import pandas as pd
 from authenticator import Authenticator
 from config import config as DBconfig
 import queries.vet_queries as vet
+import queries.admin_queries as admin
 
 import numpy as np
 
 db = mysql.connector.connect(**DBconfig)
 cursor = db.cursor()
 userAuth = Authenticator(cursor)
-error = ""
 
 if "isLogin" not in st.session_state:
     st.session_state.isLogin = False
@@ -19,6 +19,7 @@ if "isLogin" not in st.session_state:
     st.session_state.emp_name = ""
     st.session_state.emp_ssn = ""
     st.session_state.error = ""
+    st.session_state.sql_result = ""
 
 
 def create_database(cursor):
@@ -65,6 +66,13 @@ def handle_insert_prescription(cursor, drug_id, animal_id, end_date, dose):
     db.commit()
 
 
+def handle_sql_query(db, sql_query):
+    (st.session_state.sql_result, st.session_state.error) = admin.run_query(
+        db, sql_query
+    )
+    db.commit()
+
+
 def clear_error():
     st.session_state.error = ""
 
@@ -87,11 +95,23 @@ def greetings():
 
 
 def render_admin_options():
-    menu = ["Home"]
+    menu = ["Home", "SQL Query"]
     options = st.sidebar.radio("Select an option :dart:", menu)
     match options:
         case "Home":
             greetings()
+        case "SQL Query":
+            st.subheader("Run a custom query 👨🏻‍💻")
+            with st.form("sql_form"):
+                # Input sql query
+                dose = st.text_input("Write an SQL Query", key="sql_query")
+
+                submit = st.form_submit_button(
+                    "Run query",
+                    on_click=lambda: handle_sql_query(db, st.session_state.sql_query),
+                )
+
+            st.write(st.session_state.sql_result)
 
 
 def render_vet_options():
