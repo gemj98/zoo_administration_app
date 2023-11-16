@@ -10,6 +10,7 @@ import numpy as np
 db = mysql.connector.connect(**DBconfig)
 cursor = db.cursor()
 userAuth = Authenticator(cursor)
+error = ""
 
 if "isLogin" not in st.session_state:
     st.session_state.isLogin = False
@@ -17,6 +18,7 @@ if "isLogin" not in st.session_state:
     st.session_state.role = ""
     st.session_state.emp_name = ""
     st.session_state.emp_ssn = ""
+    st.session_state.error = ""
 
 
 def create_database(cursor):
@@ -47,22 +49,28 @@ def handle_log_out():
 
 
 def handle_insert_animal_check(cursor, animal_id, health_status):
-    vet.insert_animal_check(cursor, animal_id, health_status)
+    st.session_state.error = vet.insert_animal_check(cursor, animal_id, health_status)
     db.commit()
 
 
 def handle_insert_specie_check(cursor, specie_id, health_status):
-    vet.insert_specie_check(cursor, specie_id, health_status)
+    st.session_state.error = vet.insert_specie_check(cursor, specie_id, health_status)
     db.commit()
 
 
 def handle_insert_prescription(cursor, drug_id, animal_id, end_date, dose):
-    error = vet.insert_prescription(cursor, drug_id, animal_id, end_date, dose)
+    st.session_state.error = vet.insert_prescription(
+        cursor, drug_id, animal_id, end_date, dose
+    )
     db.commit()
 
 
+def clear_error():
+    st.session_state.error = ""
+
+
 def login_widget():
-    with st.form("my_form"):
+    with st.form("login_form"):
         username = st.text_input("Enter your username", key="user_input")
         password = st.text_input(
             "Enter your password", key="pswd_input", type="password"
@@ -94,8 +102,6 @@ def render_vet_options():
         "Insert a prescription",
     ]
     options = st.sidebar.radio("Select an option :dart:", menu)
-    st.warning("This is a warning", icon="⚠️")
-    st.error("Do you really, really, wanna do this?")
     match options:
         case "Home":
             greetings()
@@ -131,16 +137,21 @@ def render_vet_options():
                 use_container_width=True,
             )
 
-            # Select health_status
-            health_status = {"Healthy": 1, "Sick": 0}
-            status = st.radio("Select health status", list(health_status))
+            with st.form("animal_check_form"):
+                # Select health_status
+                health_status = {"Healthy": 1, "Sick": 0}
+                status = st.radio(
+                    "Select health status", list(health_status), key="animal_status"
+                )
 
-            submit = st.button(
-                "Insert animal check",
-                on_click=lambda: handle_insert_animal_check(
-                    cursor, animals[animal], health_status[status]
-                ),
-            )
+                submit = st.form_submit_button(
+                    "Insert animal check",
+                    on_click=lambda: handle_insert_animal_check(
+                        cursor,
+                        animal_id=animals[animal],
+                        health_status=health_status[st.session_state.animal_status],
+                    ),
+                )
 
         case "Insert specie check":
             st.subheader("Insert specie check :fish:")
@@ -168,16 +179,21 @@ def render_vet_options():
                 use_container_width=True,
             )
 
-            # Select health_status
-            health_status = {"Healthy": 1, "Sick": 0}
-            status = st.radio("Select health status", list(health_status))
+            with st.form("animal_check_form"):
+                # Select health_status
+                health_status = {"Healthy": 1, "Sick": 0}
+                status = st.radio(
+                    "Select health status", list(health_status), key="specie_status"
+                )
 
-            submit = st.button(
-                "Insert specie check",
-                on_click=lambda: handle_insert_specie_check(
-                    cursor, species[specie], health_status[status]
-                ),
-            )
+                submit = st.form_submit_button(
+                    "Insert specie check",
+                    on_click=lambda: handle_insert_specie_check(
+                        cursor,
+                        specie_id=species[specie],
+                        health_status=health_status[st.session_state.specie_status],
+                    ),
+                )
         case "Insert a prescription":
             st.subheader("Create a prescription 💊")
 
@@ -222,21 +238,29 @@ def render_vet_options():
             # Select drug
             result = vet.get_drugs(cursor)
             drugs = dict(result)
-            # options = list(drugs)
-            drug = st.selectbox("Select a drug", drugs).lower()
 
-            # Input dose
-            dose = st.text_input("Write the dose", key="dose")
+            with st.form("prescription_form"):
+                # options = list(drugs)
+                drug = st.selectbox("Select a drug", drugs, key="drug").lower()
 
-            # Input end date
-            end_date = st.date_input("Select prescription's end date")
+                # Input dose
+                dose = st.text_input("Write the dose", key="dose")
 
-            submit = st.button(
-                "Insert prescription",
-                on_click=lambda: handle_insert_prescription(
-                    cursor, drugs[drug], animals[animal], end_date, dose
-                ),
-            )
+                # Input end date
+                end_date = st.date_input(
+                    "Select prescription's end date", key="presc_end_date"
+                )
+
+                submit = st.form_submit_button(
+                    "Insert prescription",
+                    on_click=lambda: handle_insert_prescription(
+                        cursor,
+                        drug_id=drugs[st.session_state.drug],
+                        animal_id=animals[animal],
+                        end_date=st.session_state.presc_end_date,
+                        dose=st.session_state.dose,
+                    ),
+                )
 
 
 def render_security_options():
@@ -277,6 +301,7 @@ def render_visitor_options():
 
 def main():
     st.title("National Zoo System :elephant:")
+
     if not st.session_state.isLogin:
         login_widget()
     else:
@@ -296,6 +321,13 @@ def main():
             case _:
                 render_visitor_options()
         logoutButton = st.sidebar.button("Logout", on_click=handle_log_out)
+        if st.session_state.error != "":
+            with st.sidebar.form("error_form"):
+                st.warning("MYSQL Error: {}".format(st.session_state.error), icon="⚠️")
+                submit = st.form_submit_button(
+                    "Clear error message",
+                    on_click=lambda: clear_error(),
+                )
 
 
 if __name__ == "__main__":

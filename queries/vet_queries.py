@@ -94,10 +94,12 @@ def insert_animal_check(cursor, animal_id, health_status):
         logger.error(
             "Inserting animal check for animal_id={}: {}".format(animal_id, err.msg)
         )
+        return err.msg
     else:
         logger.info(
             "Inserting animal check for animal_id={}: Success".format(animal_id)
         )
+        return ""
 
 
 def get_specie_checks_for_specie(cursor, specie_id):
@@ -126,12 +128,14 @@ def insert_specie_check(cursor, specie_id, health_status):
         cursor.execute(insert_specie_check_query, insert_specie_check_data)
     except mysql.connector.Error as err:
         logger.error(
-            "Inserting animal check for specie_id={}: {}".format(specie_id, err.msg)
+            "Inserting specie check for specie_id={}: {}".format(specie_id, err.msg)
         )
+        return err.msg
     else:
         logger.info(
-            "Inserting animal check for specie_id={}: Success".format(specie_id)
+            "Inserting specie check for specie_id={}: Success".format(specie_id)
         )
+        return ""
 
 
 def insert_prescription(cursor, drug_id, animal_id, end_date, dose):

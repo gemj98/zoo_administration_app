@@ -61,7 +61,7 @@ CREATE TABLE animal_check(
     health_status BOOLEAN,
     FOREIGN KEY (vet_ssn) REFERENCES employee(ssn) ON UPDATE CASCADE ON DELETE RESTRICT,
     FOREIGN KEY (animal_id) REFERENCES animal(animal_id) ON UPDATE CASCADE ON DELETE CASCADE,
-    PRIMARY KEY (vet_ssn, animal_id, record_date)
+    PRIMARY KEY (animal_id, record_date)
 );
 
 DELIMITER //
