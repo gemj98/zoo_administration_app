@@ -107,10 +107,10 @@ INSERT INTO employee (ssn, Ename, position) values
 	('535-08-5848', 'Davidson Wenham', 'veterinarian'),
 	('514-24-9839', 'Ophelia Angeau', 'feeder'),
 	('377-24-8838', 'Glen McFadyen', 'security'),
+	('593-63-0610', 'Forrester Antyukhin', 'tour_guide'),
 	('761-60-4472', 'Sibelle Pinor', 'admin');
     
 /*
-	('593-63-0610', 'Forrester Antyukhin', 'trainer'),
 	('683-66-8443', 'Meaghan Dunphie', 'veterinarian'),
 	('835-52-2763', 'Giorgia Longstreeth', 'security'),
 	('478-65-2874', 'Nancee Giamelli', 'trainer'),

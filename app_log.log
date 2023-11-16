@@ -1,5 +1,0 @@
-2023-11-16 10:53:00 {authenticator} [INFO] Login into app as role=veterinarian: Success
-2023-11-16 10:53:06 {queries.vet_queries} [INFO] Inserting animal check for animal_id=1: Success
-2023-11-16 10:53:09 {queries.vet_queries} [INFO] Inserting specie check for specie_id=7: Success
-2023-11-16 10:53:25 {queries.vet_queries} [INFO] Inserting prescription for animal_id=2: Success
-2023-11-16 10:53:36 {queries.vet_queries} [ERROR] Inserting prescription for animal_id=2: Duplicate entry '2-2-2023-11-16' for key 'prescription.PRIMARY'

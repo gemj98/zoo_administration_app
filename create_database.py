@@ -24,9 +24,13 @@ cursor = db.cursor()
 auth = Authenticator(cursor)
 
 # Create users
-auth.create_user(username="vet", password="1", ssn="535-08-5848")
+auth.create_user(username="veterinarian", password="1", ssn="535-08-5848")
 auth.create_user("admin", "1", "761-60-4472")
 auth.create_user("security", "1", "377-24-8838")
+auth.create_user("trainer", "1", "867-43-6911")
+auth.create_user("feeder", "1", "514-24-9839")
+auth.create_user("habitat_manager", "1", "628-43-7850")
+auth.create_user("tour_guide", "1", "593-63-0610")
 db.commit()
 
 db.close()

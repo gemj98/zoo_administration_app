@@ -1,5 +1,6 @@
 import bcrypt
 import logging
+import mysql.connector
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -91,5 +92,9 @@ class Authenticator:
             VALUES (%s, %s, %s)
             """
             create_user_data = [username, hashed_password, ssn]
-            self.cursor.execute(create_user_query, create_user_data)
-            logger.info("{}Success".format(log_msg))
+            try:
+                self.cursor.execute(create_user_query, create_user_data)
+            except mysql.connector.Error as err:
+                logger.info("{}{}".format(log_msg, err.msg))
+            else:
+                logger.info("{}Success".format(log_msg))

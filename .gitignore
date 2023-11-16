@@ -1,5 +1,6 @@
 /config
 config.py
+app_log.log
 .DS_Store
 .huskyrc.json
 out
