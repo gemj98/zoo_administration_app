@@ -1,3 +1,5 @@
+# SJSU CMPE 138 FALL 2023 TEAM10
+
 import bcrypt
 import logging
 import mysql.connector

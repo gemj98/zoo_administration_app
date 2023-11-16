@@ -1,3 +1,5 @@
+# SJSU CMPE 138 FALL 2023 TEAM10
+
 from authenticator import Authenticator
 import mysql.connector
 from config import config as DBconfig
