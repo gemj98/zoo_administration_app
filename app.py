@@ -38,6 +38,7 @@ def handle_log_in():
 
 
 def handle_log_out():
+    userAuth.logout()
     st.session_state.isLogin = False
     st.session_state.username = ""
     st.session_state.role = ""
@@ -56,14 +57,17 @@ def handle_insert_specie_check(cursor, specie_id, health_status):
 
 
 def handle_insert_prescription(cursor, drug_id, animal_id, end_date, dose):
-    vet.insert_prescription(cursor, drug_id, animal_id, end_date, dose)
+    error = vet.insert_prescription(cursor, drug_id, animal_id, end_date, dose)
     db.commit()
 
 
 def login_widget():
-    username = st.text_input("Enter your username", key="user_input")
-    password = st.text_input("Enter your password", key="pswd_input", type="password")
-    loginButton = st.button("Login", on_click=handle_log_in)
+    with st.form("my_form"):
+        username = st.text_input("Enter your username", key="user_input")
+        password = st.text_input(
+            "Enter your password", key="pswd_input", type="password"
+        )
+        loginButton = st.form_submit_button("Login", on_click=handle_log_in)
 
 
 def greetings():
@@ -90,6 +94,8 @@ def render_vet_options():
         "Insert a prescription",
     ]
     options = st.sidebar.radio("Select an option :dart:", menu)
+    st.warning("This is a warning", icon="⚠️")
+    st.error("Do you really, really, wanna do this?")
     match options:
         case "Home":
             greetings()

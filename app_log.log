@@ -1,0 +1,38 @@
+2023-11-16 08:49:47 {authenticator} [INFO] Logout
+2023-11-16 08:49:52 {authenticator} [INFO] Login into app as role=veterinarian: Success
+2023-11-16 08:49:56 {authenticator} [INFO] Logout
+2023-11-16 08:49:59 {authenticator} [INFO] Login into app as role=veterinarian: Success
+2023-11-16 08:50:02 {queries.vet_queries} [INFO] Inserting animal check for animal_id=1: Success
+2023-11-16 08:50:03 {queries.vet_queries} [INFO] Inserting animal check for animal_id=1: Success
+2023-11-16 08:50:06 {queries.vet_queries} [INFO] Inserting animal check for animal_id=2: Success
+2023-11-16 08:50:12 {queries.vet_queries} [INFO] Inserting animal check for specie_id=8: Success
+2023-11-16 08:50:19 {queries.vet_queries} [INFO] Inserting prescription for animal_id=2: Success
+2023-11-16 08:50:21 {queries.vet_queries} [ERROR] Inserting prescription for animal_id=2: Duplicate entry '1-2-2023-11-16' for key 'prescription.PRIMARY'
+2023-11-16 08:50:23 {queries.vet_queries} [ERROR] Inserting prescription for animal_id=2: Duplicate entry '1-2-2023-11-16' for key 'prescription.PRIMARY'
+2023-11-16 08:50:25 {queries.vet_queries} [ERROR] Inserting prescription for animal_id=2: Duplicate entry '1-2-2023-11-16' for key 'prescription.PRIMARY'
+2023-11-16 09:01:04 {queries.vet_queries} [INFO] Inserting prescription for animal_id=2: Success
+2023-11-16 09:01:04 {queries.vet_queries} [INFO] Inserting prescription for animal_id=2: Success
+2023-11-16 09:01:04 {queries.vet_queries} [INFO] Inserting prescription for animal_id=2: Success
+2023-11-16 09:01:04 {queries.vet_queries} [INFO] Inserting prescription for animal_id=2: Success
+2023-11-16 09:01:06 {queries.vet_queries} [ERROR] Inserting prescription for animal_id=2: Duplicate entry '2-2-2023-11-16' for key 'prescription.PRIMARY'
+2023-11-16 09:01:06 {queries.vet_queries} [ERROR] Inserting prescription for animal_id=2: Duplicate entry '2-2-2023-11-16' for key 'prescription.PRIMARY'
+2023-11-16 09:01:06 {queries.vet_queries} [ERROR] Inserting prescription for animal_id=2: Duplicate entry '2-2-2023-11-16' for key 'prescription.PRIMARY'
+2023-11-16 09:01:06 {queries.vet_queries} [ERROR] Inserting prescription for animal_id=2: Duplicate entry '2-2-2023-11-16' for key 'prescription.PRIMARY'
+2023-11-16 09:01:10 {queries.vet_queries} [INFO] Inserting prescription for animal_id=2: Success
+2023-11-16 09:01:10 {queries.vet_queries} [INFO] Inserting prescription for animal_id=2: Success
+2023-11-16 09:01:10 {queries.vet_queries} [INFO] Inserting prescription for animal_id=2: Success
+2023-11-16 09:01:10 {queries.vet_queries} [INFO] Inserting prescription for animal_id=2: Success
+2023-11-16 09:01:13 {queries.vet_queries} [ERROR] Inserting prescription for animal_id=2: Duplicate entry '3-2-2023-11-16' for key 'prescription.PRIMARY'
+2023-11-16 09:01:13 {queries.vet_queries} [ERROR] Inserting prescription for animal_id=2: Duplicate entry '3-2-2023-11-16' for key 'prescription.PRIMARY'
+2023-11-16 09:01:13 {queries.vet_queries} [ERROR] Inserting prescription for animal_id=2: Duplicate entry '3-2-2023-11-16' for key 'prescription.PRIMARY'
+2023-11-16 09:01:13 {queries.vet_queries} [ERROR] Inserting prescription for animal_id=2: Duplicate entry '3-2-2023-11-16' for key 'prescription.PRIMARY'
+2023-11-16 09:06:12 {authenticator} [INFO] Logout
+2023-11-16 09:06:12 {authenticator} [INFO] Logout
+2023-11-16 09:06:12 {authenticator} [INFO] Logout
+2023-11-16 09:06:12 {authenticator} [INFO] Logout
+2023-11-16 09:06:12 {authenticator} [INFO] Logout
+2023-11-16 09:06:23 {authenticator} [INFO] Login into app as role=veterinarian: Success
+2023-11-16 09:06:23 {authenticator} [INFO] Login into app as role=veterinarian: Success
+2023-11-16 09:06:23 {authenticator} [INFO] Login into app as role=veterinarian: Success
+2023-11-16 09:06:23 {authenticator} [INFO] Login into app as role=veterinarian: Success
+2023-11-16 09:06:23 {authenticator} [INFO] Login into app as role=veterinarian: Success
