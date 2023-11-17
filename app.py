@@ -356,7 +356,7 @@ def render_trainer_options():
             st.subheader("Update animal training status :turtle:")
             
             # Select specie
-            result = animalHab.get_species(cursor)
+            result = vet.get_species_single(cursor)
             species = dict(result)
             options = [word.capitalize() for word in list(species)]
             specie = st.selectbox("Select a specie", options).lower()
