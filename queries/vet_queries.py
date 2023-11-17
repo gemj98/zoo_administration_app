@@ -1,7 +1,19 @@
+# SJSU CMPE 138 FALL 2023 TEAM10
+
 from datetime import datetime
 import streamlit as st
-import pandas as pd
-from config import config as DBconfig
+import mysql.connector
+import logging
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+formatter = logging.Formatter(
+    "%(asctime)s {%(name)s} [%(levelname)s] %(message)s", "%Y-%m-%d %H:%M:%S"
+)
+file_handler = logging.FileHandler("app_log.log")
+file_handler.setLevel(logging.DEBUG)
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
 
 
 def get_species_single(cursor):
@@ -76,7 +88,18 @@ def insert_animal_check(cursor, animal_id, health_status):
         current_date,
         health_status,
     )
-    cursor.execute(insert_animal_check_query, insert_animal_check_data)
+    try:
+        cursor.execute(insert_animal_check_query, insert_animal_check_data)
+    except mysql.connector.Error as err:
+        logger.error(
+            "Inserting animal check for animal_id={}: {}".format(animal_id, err.msg)
+        )
+        return err.msg
+    else:
+        logger.info(
+            "Inserting animal check for animal_id={}: Success".format(animal_id)
+        )
+        return ""
 
 
 def get_specie_checks_for_specie(cursor, specie_id):
@@ -101,7 +124,18 @@ def insert_specie_check(cursor, specie_id, health_status):
         current_date,
         health_status,
     )
-    cursor.execute(insert_specie_check_query, insert_specie_check_data)
+    try:
+        cursor.execute(insert_specie_check_query, insert_specie_check_data)
+    except mysql.connector.Error as err:
+        logger.error(
+            "Inserting specie check for specie_id={}: {}".format(specie_id, err.msg)
+        )
+        return err.msg
+    else:
+        logger.info(
+            "Inserting specie check for specie_id={}: Success".format(specie_id)
+        )
+        return ""
 
 
 def insert_prescription(cursor, drug_id, animal_id, end_date, dose):
@@ -119,4 +153,15 @@ def insert_prescription(cursor, drug_id, animal_id, end_date, dose):
         end_date,
         dose,
     )
-    cursor.execute(insert_prescription_query, insert_prescription_data)
+    try:
+        cursor.execute(insert_prescription_query, insert_prescription_data)
+    except mysql.connector.Error as err:
+        logger.error(
+            "Inserting prescription for animal_id={}: {}".format(animal_id, err.msg)
+        )
+        return err.msg
+    else:
+        logger.info(
+            "Inserting prescription for animal_id={}: Success".format(animal_id)
+        )
+        return ""

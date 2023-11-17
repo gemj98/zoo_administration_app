@@ -1,9 +1,13 @@
+# SJSU CMPE 138 FALL 2023 TEAM10
+
 import streamlit as st
 import mysql.connector
 import pandas as pd
 from authenticator import Authenticator
 from config import config as DBconfig
 import queries.vet_queries as vet
+import queries.admin_queries as admin
+import queries.animal_habitat_queries as animalHab
 
 import numpy as np
 
@@ -17,6 +21,8 @@ if "isLogin" not in st.session_state:
     st.session_state.role = ""
     st.session_state.emp_name = ""
     st.session_state.emp_ssn = ""
+    st.session_state.error = ""
+    st.session_state.sql_result = ""
 
 
 def create_database(cursor):
@@ -38,6 +44,7 @@ def handle_log_in():
 
 
 def handle_log_out():
+    userAuth.logout()
     st.session_state.isLogin = False
     st.session_state.username = ""
     st.session_state.role = ""
@@ -46,24 +53,57 @@ def handle_log_out():
 
 
 def handle_insert_animal_check(cursor, animal_id, health_status):
-    vet.insert_animal_check(cursor, animal_id, health_status)
+    st.session_state.error = vet.insert_animal_check(cursor, animal_id, health_status)
     db.commit()
 
 
 def handle_insert_specie_check(cursor, specie_id, health_status):
-    vet.insert_specie_check(cursor, specie_id, health_status)
+    st.session_state.error = vet.insert_specie_check(cursor, specie_id, health_status)
     db.commit()
 
 
 def handle_insert_prescription(cursor, drug_id, animal_id, end_date, dose):
-    vet.insert_prescription(cursor, drug_id, animal_id, end_date, dose)
+    st.session_state.error = vet.insert_prescription(
+        cursor, drug_id, animal_id, end_date, dose
+    )
+    db.commit()
+
+def handle_insert_meal_record(cursor, specie_id):
+    st.session_state.error = animalHab.insert_meal_record(
+        cursor, specie_id
+    )
+    db.commit()
+
+def handle_update_training_status(cursor, animal_id, training_status):
+    st.session_state.error = animalHab.update_animal_status(
+        cursor, animal_id, training_status
+    )
+    db.commit()
+
+def handle_update_temperature(cursor, habitat_id, temperature):
+    st.session_state.error = animalHab.update_habitat_temp(
+        cursor, habitat_id, temperature
+    )
+    db.commit()
+
+def handle_sql_query(db, sql_query):
+    (st.session_state.sql_result, st.session_state.error) = admin.run_query(
+        db, sql_query
+    )
     db.commit()
 
 
+def clear_error():
+    st.session_state.error = ""
+
+
 def login_widget():
-    username = st.text_input("Enter your username", key="user_input")
-    password = st.text_input("Enter your password", key="pswd_input", type="password")
-    loginButton = st.button("Login", on_click=handle_log_in)
+    with st.form("login_form"):
+        username = st.text_input("Enter your username", key="user_input")
+        password = st.text_input(
+            "Enter your password", key="pswd_input", type="password"
+        )
+        loginButton = st.form_submit_button("Login", on_click=handle_log_in)
 
 
 def greetings():
@@ -75,11 +115,23 @@ def greetings():
 
 
 def render_admin_options():
-    menu = ["Home"]
+    menu = ["Home", "SQL Query"]
     options = st.sidebar.radio("Select an option :dart:", menu)
     match options:
         case "Home":
             greetings()
+        case "SQL Query":
+            st.subheader("Run a custom query 👨🏻‍💻")
+            with st.form("sql_form"):
+                # Input sql query
+                dose = st.text_input("Write an SQL Query", key="sql_query")
+
+                submit = st.form_submit_button(
+                    "Run query",
+                    on_click=lambda: handle_sql_query(db, st.session_state.sql_query),
+                )
+
+            st.write(st.session_state.sql_result)
 
 
 def render_vet_options():
@@ -125,16 +177,21 @@ def render_vet_options():
                 use_container_width=True,
             )
 
-            # Select health_status
-            health_status = {"Healthy": 1, "Sick": 0}
-            status = st.radio("Select health status", list(health_status))
+            with st.form("animal_check_form"):
+                # Select health_status
+                health_status = {"Healthy": 1, "Sick": 0}
+                status = st.radio(
+                    "Select health status", list(health_status), key="animal_status"
+                )
 
-            submit = st.button(
-                "Insert animal check",
-                on_click=lambda: handle_insert_animal_check(
-                    cursor, animals[animal], health_status[status]
-                ),
-            )
+                submit = st.form_submit_button(
+                    "Insert animal check",
+                    on_click=lambda: handle_insert_animal_check(
+                        cursor,
+                        animal_id=animals[animal],
+                        health_status=health_status[st.session_state.animal_status],
+                    ),
+                )
 
         case "Insert specie check":
             st.subheader("Insert specie check :fish:")
@@ -162,16 +219,21 @@ def render_vet_options():
                 use_container_width=True,
             )
 
-            # Select health_status
-            health_status = {"Healthy": 1, "Sick": 0}
-            status = st.radio("Select health status", list(health_status))
+            with st.form("animal_check_form"):
+                # Select health_status
+                health_status = {"Healthy": 1, "Sick": 0}
+                status = st.radio(
+                    "Select health status", list(health_status), key="specie_status"
+                )
 
-            submit = st.button(
-                "Insert specie check",
-                on_click=lambda: handle_insert_specie_check(
-                    cursor, species[specie], health_status[status]
-                ),
-            )
+                submit = st.form_submit_button(
+                    "Insert specie check",
+                    on_click=lambda: handle_insert_specie_check(
+                        cursor,
+                        specie_id=species[specie],
+                        health_status=health_status[st.session_state.specie_status],
+                    ),
+                )
         case "Insert a prescription":
             st.subheader("Create a prescription 💊")
 
@@ -216,21 +278,29 @@ def render_vet_options():
             # Select drug
             result = vet.get_drugs(cursor)
             drugs = dict(result)
-            # options = list(drugs)
-            drug = st.selectbox("Select a drug", drugs).lower()
 
-            # Input dose
-            dose = st.text_input("Write the dose", key="dose")
+            with st.form("prescription_form"):
+                # options = list(drugs)
+                drug = st.selectbox("Select a drug", drugs, key="drug").lower()
 
-            # Input end date
-            end_date = st.date_input("Select prescription's end date")
+                # Input dose
+                dose = st.text_input("Write the dose", key="dose")
 
-            submit = st.button(
-                "Insert prescription",
-                on_click=lambda: handle_insert_prescription(
-                    cursor, drugs[drug], animals[animal], end_date, dose
-                ),
-            )
+                # Input end date
+                end_date = st.date_input(
+                    "Select prescription's end date", key="presc_end_date"
+                )
+
+                submit = st.form_submit_button(
+                    "Insert prescription",
+                    on_click=lambda: handle_insert_prescription(
+                        cursor,
+                        drug_id=drugs[st.session_state.drug],
+                        animal_id=animals[animal],
+                        end_date=st.session_state.presc_end_date,
+                        dose=st.session_state.dose,
+                    ),
+                )
 
 
 def render_security_options():
@@ -242,27 +312,128 @@ def render_security_options():
 
 
 def render_feeder_options():
-    menu = ["Home"]
+    menu = ["Home", "Insert meal record"]
     options = st.sidebar.radio("Select an option :dart:", menu)
     match options:
         case "Home":
             greetings()
+        case "Insert meal record":
+            st.subheader("Insert meal record :turtle:")
+
+            # Select specie
+            result = animalHab.get_species(cursor)
+            species = dict(result)
+            options = [word.capitalize() for word in list(species)]
+            specie = st.selectbox("Select a specie", options).lower()
+
+            # List past 5 meal records
+            result = animalHab.get_meal_records(cursor, species[specie])
+            df = pd.DataFrame(result, columns=["Record Date"])
+            st.write("Meal Record history")
+            st.dataframe(
+                df,
+                height=245,
+                use_container_width=True,
+            )
+            
+            with st.form("meal_record_form"):
+                submit = st.form_submit_button(
+                    "Insert meal record",
+                    on_click=lambda: handle_insert_meal_record(
+                        cursor,
+                        specie_id=species[specie],
+                    ),
+                )
 
 
 def render_trainer_options():
-    menu = ["Home"]
+    menu = ["Home", "Update animal training status"]
     options = st.sidebar.radio("Select an option :dart:", menu)
     match options:
         case "Home":
             greetings()
+        case "Update animal training status":
+            st.subheader("Update animal training status :turtle:")
+            
+            # Select specie
+            result = vet.get_species_single(cursor)
+            species = dict(result)
+            options = [word.capitalize() for word in list(species)]
+            specie = st.selectbox("Select a specie", options).lower()
+
+            # Select animal
+            result = animalHab.get_animals_from_specie(cursor, species[specie])
+            print(result)
+            animals = dict(result)
+            options = list(animals)
+            animal = st.selectbox("Select an animal", animals)
+
+            # Display current training status
+            result = animalHab.get_animal_status(cursor, animals[animal])
+            df = pd.DataFrame(result, columns=["Training Status"])
+            st.write("Training Status")
+            st.dataframe(
+                df,
+                height=245,
+                use_container_width=True,
+            )
+
+            result = animalHab.get_status_options(cursor)
+            status_options = dict(result)
+            options = [word for word in list(status_options)]
+            status = st.selectbox("Select a training status", options)
+            
+            with st.form("training_form"):
+
+                submit = st.form_submit_button(
+                    "Update training status",
+                    on_click=lambda: handle_update_training_status(
+                        cursor,
+                        animal_id=animals[animal],
+                        training_status=status_options[status]
+                    ),
+                )
+
 
 
 def render_habitat_manager_options():
-    menu = ["Home"]
+    menu = ["Home", "Update habitat temperature"]
     options = st.sidebar.radio("Select an option :dart:", menu)
     match options:
         case "Home":
             greetings()
+        case "Update habitat temperature":
+
+            # Select habitat
+            result = animalHab.get_habitat(cursor)
+            habitats = dict(result)
+            options = [word.capitalize() for word in list(habitats)]
+            habitat = st.selectbox("Select a habitat", options).lower()
+
+            # Display current temperature
+            result = animalHab.get_habitat_temp(cursor, habitats[habitat])
+            df = pd.DataFrame(result, columns=["Temperature"])
+            st.write("Temperature")
+            st.dataframe(
+                df,
+                height=245,
+                use_container_width=True,
+            )
+
+            # Input temperature
+            temp = st.text_input("Write the temperature", key="temperature")
+
+            with st.form("habitat_form"):
+                
+
+                submit = st.form_submit_button(
+                    "Update temperature",
+                    on_click=lambda: handle_update_temperature(
+                        cursor,
+                        habitat_id = habitats[habitat],
+                        temperature = temp
+                    ),
+                )            
 
 
 def render_visitor_options():
@@ -271,6 +442,7 @@ def render_visitor_options():
 
 def main():
     st.title("National Zoo System :elephant:")
+
     if not st.session_state.isLogin:
         login_widget()
     else:
@@ -290,6 +462,13 @@ def main():
             case _:
                 render_visitor_options()
         logoutButton = st.sidebar.button("Logout", on_click=handle_log_out)
+        if st.session_state.error != "":
+            with st.sidebar.form("error_form"):
+                st.warning("MYSQL Error: {}".format(st.session_state.error), icon="⚠️")
+                submit = st.form_submit_button(
+                    "Clear error message",
+                    on_click=lambda: clear_error(),
+                )
 
 
 if __name__ == "__main__":
