@@ -7,6 +7,7 @@ from authenticator import Authenticator
 from config import config as DBconfig
 import queries.vet_queries as vet
 import queries.admin_queries as admin
+import queries.animal_habitat_queries as animalHab
 
 import numpy as np
 
@@ -67,6 +68,23 @@ def handle_insert_prescription(cursor, drug_id, animal_id, end_date, dose):
     )
     db.commit()
 
+def handle_insert_meal_record(cursor, specie_id):
+    st.session_state.error = animalHab.insert_meal_record(
+        cursor, specie_id
+    )
+    db.commit()
+
+def handle_update_training_status(cursor, animal_id, training_status):
+    st.session_state.error = animalHab.update_animal_status(
+        cursor, animal_id, training_status
+    )
+    db.commit()
+
+def handle_update_temperature(cursor, habitat_id, temperature):
+    st.session_state.error = animalHab.update_habitat_temp(
+        cursor, habitat_id, temperature
+    )
+    db.commit()
 
 def handle_sql_query(db, sql_query):
     (st.session_state.sql_result, st.session_state.error) = admin.run_query(
@@ -294,27 +312,128 @@ def render_security_options():
 
 
 def render_feeder_options():
-    menu = ["Home"]
+    menu = ["Home", "Insert meal record"]
     options = st.sidebar.radio("Select an option :dart:", menu)
     match options:
         case "Home":
             greetings()
+        case "Insert meal record":
+            st.subheader("Insert meal record :turtle:")
+
+            # Select specie
+            result = animalHab.get_species(cursor)
+            species = dict(result)
+            options = [word.capitalize() for word in list(species)]
+            specie = st.selectbox("Select a specie", options).lower()
+
+            # List past 5 meal records
+            result = animalHab.get_meal_records(cursor, species[specie])
+            df = pd.DataFrame(result, columns=["Record Date"])
+            st.write("Meal Record history")
+            st.dataframe(
+                df,
+                height=245,
+                use_container_width=True,
+            )
+            
+            with st.form("meal_record_form"):
+                submit = st.form_submit_button(
+                    "Insert meal record",
+                    on_click=lambda: handle_insert_meal_record(
+                        cursor,
+                        specie_id=species[specie],
+                    ),
+                )
 
 
 def render_trainer_options():
-    menu = ["Home"]
+    menu = ["Home", "Update animal training status"]
     options = st.sidebar.radio("Select an option :dart:", menu)
     match options:
         case "Home":
             greetings()
+        case "Update animal training status":
+            st.subheader("Update animal training status :turtle:")
+            
+            # Select specie
+            result = animalHab.get_species(cursor)
+            species = dict(result)
+            options = [word.capitalize() for word in list(species)]
+            specie = st.selectbox("Select a specie", options).lower()
+
+            # Select animal
+            result = animalHab.get_animals_from_specie(cursor, species[specie])
+            print(result)
+            animals = dict(result)
+            options = list(animals)
+            animal = st.selectbox("Select an animal", animals)
+
+            # Display current training status
+            result = animalHab.get_animal_status(cursor, animals[animal])
+            df = pd.DataFrame(result, columns=["Training Status"])
+            st.write("Training Status")
+            st.dataframe(
+                df,
+                height=245,
+                use_container_width=True,
+            )
+
+            result = animalHab.get_status_options(cursor)
+            status_options = dict(result)
+            options = [word for word in list(status_options)]
+            status = st.selectbox("Select a training status", options)
+            
+            with st.form("training_form"):
+
+                submit = st.form_submit_button(
+                    "Update training status",
+                    on_click=lambda: handle_update_training_status(
+                        cursor,
+                        animal_id=animals[animal],
+                        training_status=status_options[status]
+                    ),
+                )
+
 
 
 def render_habitat_manager_options():
-    menu = ["Home"]
+    menu = ["Home", "Update habitat temperature"]
     options = st.sidebar.radio("Select an option :dart:", menu)
     match options:
         case "Home":
             greetings()
+        case "Update habitat temperature":
+
+            # Select habitat
+            result = animalHab.get_habitat(cursor)
+            habitats = dict(result)
+            options = [word.capitalize() for word in list(habitats)]
+            habitat = st.selectbox("Select a habitat", options).lower()
+
+            # Display current temperature
+            result = animalHab.get_habitat_temp(cursor, habitats[habitat])
+            df = pd.DataFrame(result, columns=["Temperature"])
+            st.write("Temperature")
+            st.dataframe(
+                df,
+                height=245,
+                use_container_width=True,
+            )
+
+            # Input temperature
+            temp = st.text_input("Write the temperature", key="temperature")
+
+            with st.form("habitat_form"):
+                
+
+                submit = st.form_submit_button(
+                    "Update temperature",
+                    on_click=lambda: handle_update_temperature(
+                        cursor,
+                        habitat_id = habitats[habitat],
+                        temperature = temp
+                    ),
+                )            
 
 
 def render_visitor_options():

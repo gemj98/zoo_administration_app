@@ -51,6 +51,8 @@ CREATE TABLE meal_records(feeder_ssn CHAR(11), specie_id INT, record_date TIMEST
 	FOREIGN KEY(feeder_ssn) references employee(ssn) ON UPDATE CASCADE ON DELETE SET NULL, 
 	FOREIGN KEY(specie_id) references specie(specie_id) ON UPDATE CASCADE ON DELETE CASCADE);
 
+CREATE TABLE animal_status(status_id INT, status_name varchar(30));
+
 CREATE TABLE specie_check(vet_ssn CHAR(11), specie_id INT, record_date TIMESTAMP, health_status varchar(300), 
 	PRIMARY KEY(specie_id, record_date), 
 	FOREIGN KEY(vet_ssn) references employee(ssn) ON UPDATE CASCADE ON DELETE SET NULL, 
@@ -141,23 +143,23 @@ values ('lion', null, 'ground beef, beef femur', 15, 420, 44.4, 1),
 INSERT INTO animal(specie_id, Aname, weight, size, health_status, trainer_ssn, training_status) values
 # lions
 	(1, 'Simba', 451, 46.7, 1, '867-43-6911', 0),
-	(1, 'Zira', 405, 40.1, 0, null, null),
+	(1, 'Zira', 405, 40.1, 0, null, -1),
 	(1, 'Tina', 405, 40.1, 0, '867-43-6911', 1),
 # elephants
     (2, 'Abigail', 6502, 124.7, 0, '622-72-0793', 1),
-    (2, 'Clover', 7012, 135.2, 0, null, null),
+    (2, 'Clover', 7012, 135.2, 0, null, -1),
 # giraffe
-	(3, 'Cleopatra', 3954, 164.5, 0, null, null),
+	(3, 'Cleopatra', 3954, 164.5, 0, null, -1),
 # zebra
-	(4, 'Daffodil', 760, 52.1, 1, null, null),
-    (4, 'Emma', 745, 50.7, 0, null, null),
+	(4, 'Daffodil', 760, 52.1, 1, null, -1),
+    (4, 'Emma', 745, 50.7, 0, null, -1),
 # tortoise
-	(5, 'Indigo', 1.1, 4.8, 0, null, null),
-	(5, 'Karma', 1.6, 5.4, 0, null, null),
-	(5, 'Daisy', 1.4, 5.1, 0, null, null),
+	(5, 'Indigo', 1.1, 4.8, 0, null, -1),
+	(5, 'Karma', 1.6, 5.4, 0, null, -1),
+	(5, 'Daisy', 1.4, 5.1, 0, null, -1),
 #banded iguana
-	(6, 'Luna', 0.4, 15, 0, null, null),
-	(6, 'Jasmine', 0.5, 23, 0, null, null);
+	(6, 'Luna', 0.4, 15, 0, null, -1),
+	(6, 'Jasmine', 0.5, 23, 0, null, -1);
 
 INSERT INTO drug(Dname, ingredients) values
 	('drug1', 'ingredient1, ingredient2'),
@@ -165,12 +167,16 @@ INSERT INTO drug(Dname, ingredients) values
 	('drug3', 'ingredient5, ingredient6');
 
 
-INSERT INTO prescription(drug_id, animal_id, vet_ssn, start_date, end_date, dose) values
+INSERT INTO animal_status(status_id, status_name) values(-1, "Untrained");
+INSERT INTO animal_status(status_id, status_name) values(0, "In Progress");
+INSERT INTO animal_status(status_id, status_name) values(1, "Complete");
+
+/*INSERT INTO prescription(drug_id, animal_id, vet_ssn, start_date, end_date, dose) values
 	(1, 1, '535-08-5848', current_timestamp(), '2023-11-25', 'One each morning'),
 	(2, 1, '535-08-5848', current_timestamp(), '2023-11-30', 'Two each morning'),
 	(3, 1, '535-08-5848', current_timestamp(), '2023-10-30', 'Two each morning'),
 	(3, 2, '535-08-5848', current_timestamp(), '2023-11-12', 'Three each morning'),
 	(3, 3, '535-08-5848', current_timestamp(), '2023-11-18', 'Four each morning');
-    
+*/    
 
 #INSERT INTO user(username, password) VALUES ("a","A"), ("b", "B"), ("c", "C");
