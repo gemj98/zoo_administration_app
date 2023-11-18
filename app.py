@@ -94,19 +94,19 @@ def handle_sql_query(db, sql_query):
     )
     db.commit()
 
-def handle_add_new_tour(cursor, tour_name, max_cap, habitat_id):
-    st.session_state.error = tour_guide.add_new_tour(cursor, tour_name, max_cap, habitat_id)
+def handle_add_new_tour(cursor, tour_name, tour_cap, habitat_id):
+    st.session_state.error, st.session_state.sql_result = tour_guide.add_new_tour(cursor, tour_name, tour_cap, habitat_id)
     db.commit()
 
-def handle_modify_tour(cursor, tour_id, habitat_id):
-    st.session_state.error = tour_guide.modify_tour_sees(
-        cursor, tour_id, habitat_id
+def handle_modify_tour(cursor, tour_id, tour_name, tour_cap):
+    st.session_state.error = tour_guide.modify_tour(
+        cursor, tour_id, tour_name, tour_cap
         )
     db.commit()
 
-def handle_modify_tour_sees(cursor, tour_id, tour_name, max_cap):
-    st.session_state.error = tour_guide.modify_tour(
-        cursor, tour_id, tour_name, max_cap
+def handle_modify_tour_sees(cursor, tour_id, habitat_id):
+    st.session_state.error = tour_guide.modify_tour_sees(
+        cursor, tour_id, habitat_id
         )
     db.commit()
 
@@ -345,16 +345,15 @@ def render_security_options():
 
             # Select ticket
             result = security.get_ticket_id(cursor)
-            tickets = dict(result)
-            options = [word.capitalize() for word in list(tickets)]
-            selected_ticket = st.selectbox("Select a ticket", options).lower()
+            #tickets = dict(result)
+            selected_ticket = st.selectbox("Select a ticket", result)
 
             with st.form("check_visitor_ticket"):
                 submit = st.form_submit_button(
                     "Check Visitor Ticket",
                     on_click=lambda: handle_check_visitor_ticket(
                         cursor,
-                        ticket_id=selected_ticket,
+                        selected_ticket,
                     ),
                 )
             
@@ -498,39 +497,41 @@ def render_tour_guide_options():
             st.subheader("Add a new tour :walking:")
 
             # Select habitat id
-            result = tour_guide.get_habitat_id(cursor)
-            all_habitat = dict(result)
+            all_habitat = tour_guide.get_habitat_id(cursor)
+            #all_habitat = dict(result)
 
             # Create a form to collect input
             with st.form("add_tour_form"):
                 # Input habitat id
-                habitat_id = st.selectbox("Select a habitat", all_habitat, key="habitat_id").lower()
+                habitat_id = st.selectbox("Select a habitat", all_habitat, key="habitat_id")
                 # Input tour name
                 tour_name = st.text_input("Tour name: ", key="tour_name")
                 # Input tour capacity
                 tour_cap = st.text_input("Tour's maximum capacity: ", key="tour_cap")
- 
+                st.write(tour_cap)
+                st.write(tour_name)
                 submit = st.form_submit_button(
                     "Add tour",
                     on_click=lambda: handle_add_new_tour(
                         cursor,
-                        tour_name,
-                        tour_cap,
+                        st.session_state.tour_name,
+                        st.session_state.tour_cap,
                         habitat_id,
                     ),
                 )
+            st.write(st.session_state.sql_result)
         
         case "Modify Tour":
             st.subheader("Modify Tour :walking:")
             st.write("You can only modify tours that you're managing.")
             # Select tour_id
-            result = tour_guide.get_tour_id(cursor)
-            all_tours = dict(result)
+            all_tours = tour_guide.get_tour_id(cursor)
+            #all_tours = dict(result)
 
             # Create a form to collect input
             with st.form("modify_tour_form"):
                 # Input tour id
-                tour_id = st.selectbox("Select a tour id", all_tours, key="tour_id").lower()
+                tour_id = st.selectbox("Select a tour id", all_tours, key="tour_id")
                 # Input tour name
                 tour_name = st.text_input("New Tour name: ", key="tour_name")
                 # Input tour capacity
@@ -540,9 +541,9 @@ def render_tour_guide_options():
                     "Modify tour",
                     on_click=lambda: handle_modify_tour(
                         cursor,
-                        tour_id,
-                        tour_name,
-                        tour_cap,
+                        st.session_state.tour_id,
+                        st.session_state.tour_name,
+                        st.session_state.tour_cap,
                     ),
                 )
             
@@ -552,26 +553,26 @@ def render_tour_guide_options():
             st.subheader("Modify Habitat associated with Tour :guide_dog:")
             st.write("You can only modify tours that you're managing.")
             # Select tour_id
-            result = tour_guide.get_tour_id(cursor)
-            all_tours = dict(result)
+            all_tours = tour_guide.get_tour_id(cursor)
+            #all_tours = dict(result)
 
             # Select habitat id
-            result = tour_guide.get_habitat_id(cursor)
-            all_habitat = dict(result)
+            all_habitat = tour_guide.get_habitat_id(cursor)
+            #all_habitat = dict(result)
 
             # Create a form to collect input
             with st.form("modify_tour_habitat_form"):
                 # Input tour id
-                tour_id = st.selectbox("Select a tour id", all_tours, key="tour_id").lower()
+                tour_id = st.selectbox("Select a tour id", all_tours, key="tour_id")
                 # Input habitat id
-                habitat_id = st.selectbox("Select a habitat", all_habitat, key="habitat_id").lower()
+                habitat_id = st.selectbox("Select a habitat", all_habitat, key="habitat_id")
  
                 submit = st.form_submit_button(
                     "Modify tour habitat",
                     on_click=lambda: handle_modify_tour_sees(
                         cursor,
-                        tour_id,
-                        habitat_id,
+                        st.session_state.tour_id,
+                        st.session_state.habitat_id,
                     ),
                 )
             
@@ -628,6 +629,8 @@ def main():
                 render_trainer_options()
             case "habitat_manager":
                 render_habitat_manager_options()
+            case "tour_guide":
+                render_tour_guide_options()
             case _:
                 render_visitor_options()
         logoutButton = st.sidebar.button("Logout", on_click=handle_log_out)

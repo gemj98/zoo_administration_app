@@ -18,7 +18,7 @@ logger.addHandler(file_handler)
 
 def get_habitat_id(cursor):
     get_habitat_id = """
-    SELECT habitat_id, name FROM habitat;
+    SELECT habitat_id FROM habitat;
     """
     cursor.execute(get_habitat_id)
     result = cursor.fetchall()
@@ -33,8 +33,9 @@ def get_tour_id(cursor):
     return result
 
 def add_new_tour(cursor, tour_name, max_cap, habitat_id):
+    
     add_new_tour = """
-    INSERT INTO tour (name, max_cap, guide_ssn) VALUES (%s, %s,%s);
+    INSERT INTO tour (Tname, max_cap, guide_ssn) VALUES (%s,%s,%s);
     """
     insert_tour_data = (
         tour_name,
@@ -46,32 +47,35 @@ def add_new_tour(cursor, tour_name, max_cap, habitat_id):
 	"""
     try:
         cursor.execute(add_new_tour, insert_tour_data)
-        cursor.execute(add_tour_sees, [habitat_id])
+        cursor.execute(add_tour_sees, (habitat_id))
     except mysql.connector.Error as err:
         logger.error(
             "Inserting tour for tour_name={} and habitat_id={}: {}".format(tour_name, habitat_id, err.msg)
         )
-        return err.msg
+        return (err.msg, "")
     else:
         logger.info(
             "Inserting tour for tour_name={}: Success".format(tour_name)
         )
-        return ""
+        return ("", "Successfully added")
 
 def modify_tour(cursor, tour_id, tour_name, max_cap):
     modify_tour = """
     UPDATE tour
-    SET name = %s, max_cap = %s
+    SET Tname = %s, max_cap = %s
     WHERE tour_id = %s AND guide_ssn = %s;
     """
     tour_data = (
         tour_name,
         max_cap,
         tour_id,
-        st.session_state.emp_ssn,
+        st.session_state.emp_ssn
     )
     try:
-        cursor.execute(modify_tour, tour_data)
+        logger.info(
+            "Modify tour for tour_id={}, tour_name={}, max_cap={}, ssn={}: Try".format(tour_id, tour_name, max_cap, st.session_state.emp_ssn)
+        )
+        cursor.execute(modify_tour, [tour_name, max_cap, tour_id, st.session_state.emp_ssn])
     except mysql.connector.Error as err:
         logger.error(
             "Modify tour for tour_id={}: {}".format(tour_id, err.msg)
@@ -132,9 +136,9 @@ def provide_tour(cursor, tour_id):
         logger.error(
             "Provide tour for tour_id={}: {}".format(tour_id, err.msg)
         )
-        return err.msg
+        return ("", err.msg)
     else:
         logger.info(
             "Provide tour for tour_id={}: Success".format(tour_id)
         )
-        return result_tour
+        return (result_tour, "")

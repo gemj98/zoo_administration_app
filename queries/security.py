@@ -34,12 +34,11 @@ def check_visitor_ticket(cursor, ticket_id):
     FROM 
         ticket
     WHERE 
-        ticket_id = %s AND
+        ticket_id=%s AND
         start_date <= CURRENT_DATE AND
         exp_date >= CURRENT_DATE;
     """
        
-    cursor.execute(check_visitor_ticket, [ticket_id])
+    cursor.execute(check_visitor_ticket, (ticket_id))
     result = cursor.fetchall()
-    print(result)
-    return result
+    return result[0][0]
