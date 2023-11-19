@@ -184,7 +184,8 @@ INSERT INTO tour(Tname, max_cap, guide_ssn) values
 	('Meet carnivores', 20, '593-63-0610'),
 	('Meet herbivores', 40, '456-21-9872'),
 	('Meet reptiles', 30, '593-63-0610'),
-    ('Meet aquatic', 70, '456-21-9872');
+    ('Meet aquatic', 70, '456-21-9872'),
+    (-1, 'COMPLETE', 0, '999-99-9999');
     
 INSERT INTO ticket(class, start_date, exp_date, tour_id) values
 	('General', '2023-11-15', '2023-12-15', 1),
@@ -201,4 +202,13 @@ INSERT INTO ticket(class, start_date, exp_date, tour_id) values
 	('First', '2023-11-18', '2023-12-15', 3),
     ('General', '2023-11-19', '2023-12-15', 4);
 	
+INSERT INTO tour_sees(tour_id, habitat_id) values
+	(1, 1),
+	(2, 2),
+    (3, 3),
+    (4, 4);
+
 #INSERT INTO user(username, password) VALUES ("a","A"), ("b", "B"), ("c", "C");
+
+SELECT * FROM ticket;
+SELECT * FROM tour_sees;
