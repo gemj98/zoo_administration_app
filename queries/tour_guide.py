@@ -65,27 +65,18 @@ def modify_tour(cursor, tour_id, tour_name, max_cap):
     SET Tname = %s, max_cap = %s
     WHERE tour_id = %s AND guide_ssn = %s;
     """
-    tour_data = (
-        tour_name,
-        max_cap,
-        tour_id,
-        st.session_state.emp_ssn
-    )
     try:
-        logger.info(
-            "Modify tour for tour_id={}, tour_name={}, max_cap={}, ssn={}: Try".format(tour_id, tour_name, max_cap, st.session_state.emp_ssn)
-        )
-        cursor.execute(modify_tour, [tour_name, max_cap, tour_id, st.session_state.emp_ssn])
+        cursor.execute(modify_tour, (tour_name, max_cap, tour_id[0], st.session_state.emp_ssn))
     except mysql.connector.Error as err:
         logger.error(
             "Modify tour for tour_id={}: {}".format(tour_id, err.msg)
         )
-        st.session_state.error = err.msg
+        return ("", err.msg)
     else:
         logger.info(
             "Modify tour for tour_id={}: Success".format(tour_id)
         )
-        st.session_state.error = "Success"
+        return ("Success", "")
     
 
 def modify_tour_sees(cursor, tour_id, habitat_id):
@@ -99,7 +90,7 @@ def modify_tour_sees(cursor, tour_id, habitat_id):
         tour_id,
     )
     try:
-        cursor.execute(modify_tour_sees, tour_sees_data)
+        cursor.execute(modify_tour_sees, (habitat_id[0], tour_id[0]))
     except mysql.connector.Error as err:
         logger.error(
             "Modify tour_sees for tour_id={}: {}".format(tour_id, err.msg)
@@ -109,7 +100,7 @@ def modify_tour_sees(cursor, tour_id, habitat_id):
         logger.info(
             "Modify tour_sees for tour_id={}: Success".format(tour_id)
         )
-        st.session_state.error = "Success"
+        return "Success"
     
 
 def provide_tour(cursor, tour_id):
@@ -122,16 +113,16 @@ def provide_tour(cursor, tour_id):
         tour_id,
         st.session_state.emp_ssn,
     )
-    result_tour = cursor.execute(tour_guide_provide_tour, tour_guide_ticket_data)
+    result_tour = cursor.execute(tour_guide_provide_tour, (tour_id[0], st.session_state.emp_ssn))
     result_tour = cursor.fetchall()
 
     nullify_ticket = """
     UPDATE ticket
-    SET tour_id = NULL
+    SET tour_id = -1
     WHERE tour_id = %s;
     """
     try:
-        cursor.execute(nullify_ticket, [tour_id])
+        cursor.execute(nullify_ticket, (tour_id))
     except mysql.connector.Error as err:
         logger.error(
             "Provide tour for tour_id={}: {}".format(tour_id, err.msg)
