@@ -84,8 +84,8 @@ class Authenticator:
         result = self.cursor.fetchall()
 
         if len(result) != 0:
-            logger.info("{}User already exists".format(log_msg))
-            return (False, "")
+            logger.info("{}username already exists".format(log_msg))
+            return "username already exists"
         else:
             salt = bcrypt.gensalt()
             hashed_password = bcrypt.hashpw(password.encode("utf-8"), salt)
@@ -98,5 +98,7 @@ class Authenticator:
                 self.cursor.execute(create_user_query, create_user_data)
             except mysql.connector.Error as err:
                 logger.info("{}{}".format(log_msg, err.msg))
+                return err.msg
             else:
                 logger.info("{}Success".format(log_msg))
+                return ""

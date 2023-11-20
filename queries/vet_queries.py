@@ -60,7 +60,7 @@ def get_prescriptions_for_animal(cursor, animal_id):
     FROM (((prescription NATURAL JOIN drug) NATURAL JOIN animal)
     JOIN employee ON vet_ssn = ssn)
     WHERE animal_id=%s
-    ORDER BY end_date DESC;
+    ORDER BY start_date DESC;
     """
     cursor.execute(prescriptions_query, [animal_id])
     result = cursor.fetchall()
