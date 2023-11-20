@@ -30,9 +30,7 @@ def run_query(db, sql_query):
 
     except mysql.connector.Error as err:
         logger.exception("Running custom query: {}".format(err))
-        print(result)
         return (result, err)
     else:
         logger.info("Running custom query: Success")
-        print(result)
         return (result, "")

@@ -93,7 +93,7 @@ CREATE TABLE prescription (drug_id INT NOT NULL, animal_id INT NOT NULL, vet_ssn
 
 # ---------------   Table for user login -----------------
 
-CREATE TABLE user (username VARCHAR(30) UNIQUE NOT NULL PRIMARY KEY, password VARCHAR(60) NOT NULL, ssn CHAR(11) UNIQUE,
+CREATE TABLE user (username VARCHAR(30) NOT NULL PRIMARY KEY, password VARCHAR(60) NOT NULL, ssn CHAR(11),
     FOREIGN KEY(ssn) references employee(ssn));
 
 
@@ -104,15 +104,15 @@ CREATE TABLE user (username VARCHAR(30) UNIQUE NOT NULL PRIMARY KEY, password VA
 -- 	FOREIGN KEY(manager_ssn) references employee(ssn) ON UPDATE CASCADE ON DELETE SET NULL);
   
 INSERT INTO employee (ssn, Ename, position) values
-	('867-43-6911', 'Helaine Halpine', 'trainer'),
-	('622-72-0793', 'Jereme Gunthorp', 'trainer'),
-	('628-43-7850', 'Pablo Tyers', 'habitat_manager'),
-	('362-78-0387', 'Idelle Graundisson', 'habitat_manager'),
-	('535-08-5848', 'Davidson Wenham', 'veterinarian'),
-	('514-24-9839', 'Ophelia Angeau', 'feeder'),
-	('377-24-8838', 'Glen McFadyen', 'security'),
-	('593-63-0610', 'Forrester Antyukhin', 'tour_guide'),
-	('761-60-4472', 'Sibelle Pinor', 'admin'),
+	('867-43-6911', 'Helaine Anderson', 'trainer'),
+	('622-72-0793', 'Jereme Smith', 'trainer'),
+	('628-43-7850', 'Pablo Williams', 'habitat_manager'),
+	('362-78-0387', 'Idelle Johnson', 'habitat_manager'),
+	('535-08-5848', 'Davidson Wilson', 'veterinarian'),
+	('514-24-9839', 'Ophelia Miller', 'feeder'),
+	('377-24-8838', 'Glen Garcia', 'security'),
+	('593-63-0610', 'Forrester Evans', 'tour_guide'),
+	('761-60-4472', 'Sibelle Collins', 'admin'),
     ('456-21-9872', 'John Doe', 'tour_guide');
     
 /*
@@ -163,28 +163,29 @@ INSERT INTO animal(specie_id, Aname, weight, size, health_status, trainer_ssn, t
 	(6, 'Jasmine', 0.5, 23, 0, null, -1);
 
 INSERT INTO drug(Dname, ingredients) values
-	('drug1', 'ingredient1, ingredient2'),
-	('drug2', 'ingredient3, ingredient4'),
-	('drug3', 'ingredient5, ingredient6');
+	('NexGard Chew', '136 mg Afoxolaner'),
+	('Aqua-Mox Forte', '500 mg Amoxicillin'),
+	('Acepromazine', 'Each mL contains: acepromazine maleate 10 mg, sodium citrate 0.36%, citric acid 0.075%, benzyl alcohol 1% and water for injection');
 
 
 INSERT INTO animal_status(status_id, status_name) values(-1, "Untrained");
 INSERT INTO animal_status(status_id, status_name) values(0, "In Progress");
 INSERT INTO animal_status(status_id, status_name) values(1, "Complete");
 
-/*INSERT INTO prescription(drug_id, animal_id, vet_ssn, start_date, end_date, dose) values
-	(1, 1, '535-08-5848', current_timestamp(), '2023-11-25', 'One each morning'),
-	(2, 1, '535-08-5848', current_timestamp(), '2023-11-30', 'Two each morning'),
-	(3, 1, '535-08-5848', current_timestamp(), '2023-10-30', 'Two each morning'),
-	(3, 2, '535-08-5848', current_timestamp(), '2023-11-12', 'Three each morning'),
-	(3, 3, '535-08-5848', current_timestamp(), '2023-11-18', 'Four each morning');
-*/    
+INSERT INTO prescription(drug_id, animal_id, vet_ssn, start_date, end_date, dose) values
+	(1, 1, '535-08-5848', '2023-10-12', '2023-11-25', 'One each morning'),
+	(2, 1, '535-08-5848', '2023-10-14', '2023-11-30', 'Two each morning'),
+	(3, 1, '535-08-5848', '2023-10-13', '2023-10-30', 'Two each morning'),
+	(3, 2, '535-08-5848', '2023-10-18', '2023-11-12', 'Three each morning'),
+	(3, 3, '535-08-5848', '2023-10-06', '2023-11-18', 'Four each morning');
 
 INSERT INTO tour(Tname, max_cap, guide_ssn) values
 	('Meet carnivores', 20, '593-63-0610'),
 	('Meet herbivores', 40, '456-21-9872'),
 	('Meet reptiles', 30, '593-63-0610'),
-    ('Meet aquatic', 70, '456-21-9872'),
+    ('Meet aquatic', 70, '456-21-9872');
+
+INSERT INTO tour(tour_id, Tname, max_cap, guide_ssn) values
     (-1, 'COMPLETE', 0, '999-99-9999');
     
 INSERT INTO ticket(class, start_date, exp_date, tour_id) values
@@ -207,8 +208,3 @@ INSERT INTO tour_sees(tour_id, habitat_id) values
 	(2, 2),
     (3, 3),
     (4, 4);
-
-#INSERT INTO user(username, password) VALUES ("a","A"), ("b", "B"), ("c", "C");
-
-SELECT * FROM ticket;
-SELECT * FROM tour_sees;
