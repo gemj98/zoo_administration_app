@@ -1,6 +1,5 @@
 # SJSU CMPE 138 FALL 2023 TEAM10
 
-import logging
 import streamlit as st
 import mysql.connector
 import pandas as pd
@@ -17,16 +16,6 @@ import numpy as np
 db = mysql.connector.connect(**DBconfig)
 cursor = db.cursor()
 userAuth = Authenticator(cursor)
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-formatter = logging.Formatter(
-    "%(asctime)s {%(name)s} [%(levelname)s] %(message)s", "%Y-%m-%d %H:%M:%S"
-)
-file_handler = logging.FileHandler("app_log.log")
-file_handler.setLevel(logging.DEBUG)
-file_handler.setFormatter(formatter)
-logger.addHandler(file_handler)
 
 if "isLogin" not in st.session_state:
     st.session_state.isLogin = False
