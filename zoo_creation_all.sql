@@ -186,11 +186,11 @@ INSERT INTO tour(Tname, max_cap, guide_ssn) values
     ('Meet aquatic', 70, '456-21-9872');
 
 INSERT INTO tour(tour_id, Tname, max_cap, guide_ssn) values
-    (-1, 'COMPLETE', 0, '999-99-9999');
+    (-1, 'COMPLETE', 0, '761-60-4472');
     
 INSERT INTO ticket(class, start_date, exp_date, tour_id) values
-	('General', '2023-11-15', '2023-12-15', 1),
-	('VIP', '2023-11-15', '2023-12-15', 1),
+	('General', '2023-11-15', '2023-11-18', 1),
+	('VIP', '2023-11-15', '2023-11-20', 1),
 	('First', '2023-11-17', '2023-12-15', 3),
     ('General', '2023-11-15', '2023-12-15', 4),
 	('VIP', '2023-11-16', '2023-12-15', 3),
