@@ -16,24 +16,26 @@ file_handler.setLevel(logging.DEBUG)
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 
+
 def get_habitat_id(cursor):
     get_habitat_id = """
-    SELECT habitat_id FROM habitat;
+    SELECT Hname, habitat_id FROM habitat;
     """
     cursor.execute(get_habitat_id)
     result = cursor.fetchall()
     return result
 
+
 def get_tour_id(cursor):
     get_tour_id = """
-    SELECT tour_id FROM tour WHERE guide_ssn = %s;
+    SELECT Tname, tour_id FROM tour WHERE guide_ssn = %s;
     """
     cursor.execute(get_tour_id, [st.session_state.emp_ssn])
     result = cursor.fetchall()
     return result
 
+
 def add_new_tour(cursor, tour_name, max_cap, habitat_id):
-    
     add_new_tour = """
     INSERT INTO tour (Tname, max_cap, guide_ssn) VALUES (%s,%s,%s);
     """
@@ -47,17 +49,19 @@ def add_new_tour(cursor, tour_name, max_cap, habitat_id):
 	"""
     try:
         cursor.execute(add_new_tour, insert_tour_data)
-        cursor.execute(add_tour_sees, (habitat_id))
+        print((habitat_id))
+        cursor.execute(add_tour_sees, [habitat_id])
     except mysql.connector.Error as err:
         logger.error(
-            "Inserting tour for tour_name={} and habitat_id={}: {}".format(tour_name, habitat_id, err.msg)
+            "Inserting tour for tour_name={} and habitat_id={}: {}".format(
+                tour_name, habitat_id, err.msg
+            )
         )
         return (err.msg, "")
     else:
-        logger.info(
-            "Inserting tour for tour_name={}: Success".format(tour_name)
-        )
+        logger.info("Inserting tour for tour_name={}: Success".format(tour_name))
         return ("", "Successfully added")
+
 
 def modify_tour(cursor, tour_id, tour_name, max_cap):
     modify_tour = """
@@ -66,18 +70,16 @@ def modify_tour(cursor, tour_id, tour_name, max_cap):
     WHERE tour_id = %s AND guide_ssn = %s;
     """
     try:
-        cursor.execute(modify_tour, (tour_name, max_cap, tour_id[0], st.session_state.emp_ssn))
-    except mysql.connector.Error as err:
-        logger.error(
-            "Modify tour for tour_id={}: {}".format(tour_id, err.msg)
+        cursor.execute(
+            modify_tour, (tour_name, max_cap, tour_id, st.session_state.emp_ssn)
         )
+    except mysql.connector.Error as err:
+        logger.error("Modify tour for tour_id={}: {}".format(tour_id, err.msg))
         return ("", err.msg)
     else:
-        logger.info(
-            "Modify tour for tour_id={}: Success".format(tour_id)
-        )
+        logger.info("Modify tour for tour_id={}: Success".format(tour_id))
         return ("Success", "")
-    
+
 
 def modify_tour_sees(cursor, tour_id, habitat_id):
     modify_tour_sees = """
@@ -90,18 +92,14 @@ def modify_tour_sees(cursor, tour_id, habitat_id):
         tour_id,
     )
     try:
-        cursor.execute(modify_tour_sees, (habitat_id[0], tour_id[0]))
+        cursor.execute(modify_tour_sees, (habitat_id, tour_id))
     except mysql.connector.Error as err:
-        logger.error(
-            "Modify tour_sees for tour_id={}: {}".format(tour_id, err.msg)
-        )
+        logger.error("Modify tour_sees for tour_id={}: {}".format(tour_id, err.msg))
         st.session_state.error = err.msg
     else:
-        logger.info(
-            "Modify tour_sees for tour_id={}: Success".format(tour_id)
-        )
+        logger.info("Modify tour_sees for tour_id={}: Success".format(tour_id))
         return "Success"
-    
+
 
 def provide_tour(cursor, tour_id):
     tour_guide_provide_tour = """
@@ -113,7 +111,9 @@ def provide_tour(cursor, tour_id):
         tour_id,
         st.session_state.emp_ssn,
     )
-    result_tour = cursor.execute(tour_guide_provide_tour, (tour_id[0], st.session_state.emp_ssn))
+    result_tour = cursor.execute(
+        tour_guide_provide_tour, (tour_id, st.session_state.emp_ssn)
+    )
     result_tour = cursor.fetchall()
 
     nullify_ticket = """
@@ -122,14 +122,10 @@ def provide_tour(cursor, tour_id):
     WHERE tour_id = %s;
     """
     try:
-        cursor.execute(nullify_ticket, (tour_id))
+        cursor.execute(nullify_ticket, [tour_id])
     except mysql.connector.Error as err:
-        logger.error(
-            "Provide tour for tour_id={}: {}".format(tour_id, err.msg)
-        )
+        logger.error("Provide tour for tour_id={}: {}".format(tour_id, err.msg))
         return ("", err.msg)
     else:
-        logger.info(
-            "Provide tour for tour_id={}: Success".format(tour_id)
-        )
+        logger.info("Provide tour for tour_id={}: Success".format(tour_id))
         return (result_tour, "")
