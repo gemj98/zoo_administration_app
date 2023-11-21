@@ -42,7 +42,7 @@ class Authenticator:
 
         if len(result) == 0:
             logger.info("Login into app: No user found")
-            return (False, "", "", "", "")
+            return ("Login into app: No user found", "", "", "", "")
         else:
             hashed_password = result[0][0].encode("utf-8")
             if bcrypt.checkpw(password.encode("utf-8"), hashed_password):
@@ -63,10 +63,22 @@ class Authenticator:
                 self.emp_name = emp_name
                 self.emp_ssn = emp_ssn
                 logger.info("Login into app as role={}: Success".format(self.role))
-                return (True, username, role, emp_name, emp_ssn)
+                return (
+                    "",
+                    username,
+                    role,
+                    emp_name,
+                    emp_ssn,
+                )
             else:
                 logger.info("Login into app: User and password do not match")
-                return (False, "", "", "", "")
+                return (
+                    "Login into app: User and password do not match",
+                    "",
+                    "",
+                    "",
+                    "",
+                )
 
     def logout(self):
         self.status = False

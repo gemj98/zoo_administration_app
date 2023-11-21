@@ -34,15 +34,19 @@ def create_database(cursor):
 
 
 def handle_log_in():
-    (success, username, role, emp_name, emp_ssn) = userAuth.login(
+    (error, username, role, emp_name, emp_ssn) = userAuth.login(
         st.session_state.user_input, st.session_state.pswd_input
     )
-    if success:
+    st.session_state.error = error
+    if not error:
         st.session_state.isLogin = True
         st.session_state.username = username
         st.session_state.role = role
         st.session_state.emp_name = emp_name
         st.session_state.emp_ssn = emp_ssn
+        return error
+    else:
+        return error
 
 
 def handle_log_out():
@@ -133,7 +137,6 @@ def handle_check_visitor_ticket(cursor, ticket):
 def handle_create_user(username, password, ssn):
     st.session_state.error = userAuth.create_user(username, password, ssn)
     db.commit()
-    print(st.session_state.error)
 
 
 def clear_error():
@@ -219,7 +222,6 @@ def render_vet_options():
 
             # Select animal
             result = vet.get_animals_from_specie(cursor, species[specie])
-            print(result)
             animals = dict(result)
             options = list(animals)
             animal = st.selectbox("Select an animal", animals)
@@ -262,7 +264,6 @@ def render_vet_options():
             # Select specie
             result = vet.get_species_multiple(cursor)
             species = dict(result)
-            print(species)
             options = [word.capitalize() for word in list(species)]
             specie = st.selectbox("Select a specie", options).lower()
 
@@ -381,18 +382,21 @@ def render_security_options():
             # Select ticket
             result = security.get_ticket_id(cursor)
             # tickets = dict(result)
-            selected_ticket = st.selectbox("Select a ticket", result)
+            selected_ticket = st.selectbox(
+                "Select a ticket", result, key="selected_ticket"
+            )
 
             with st.form("check_visitor_ticket"):
                 submit = st.form_submit_button(
                     "Check Visitor Ticket",
                     on_click=lambda: handle_check_visitor_ticket(
                         cursor,
-                        selected_ticket,
+                        st.session_state.selected_ticket,
                     ),
                 )
 
-            st.write(st.session_state.sql_result)
+            if st.session_state.sql_result in ["Valid", "Invalid"]:
+                st.write(st.session_state.sql_result)
 
 
 def render_feeder_options():
@@ -447,7 +451,6 @@ def render_trainer_options():
 
             # Select animal
             result = animalHab.get_animals_from_specie(cursor, species[specie])
-            print(result)
             animals = dict(result)
             options = list(animals)
             animal = st.selectbox("Select an animal", animals)
@@ -529,8 +532,8 @@ def render_tour_guide_options():
             st.subheader("Add a new tour :walking:")
 
             # Select habitat id
-            all_habitat = tour_guide.get_habitat_id(cursor)
-            # all_habitat = dict(result)
+            result = tour_guide.get_habitat_id(cursor)
+            all_habitat = dict(result)
 
             # Create a form to collect input
             with st.form("add_tour_form"):
@@ -542,30 +545,27 @@ def render_tour_guide_options():
                 tour_name = st.text_input("Tour name: ", key="tour_name")
                 # Input tour capacity
                 tour_cap = st.text_input("Tour's maximum capacity: ", key="tour_cap")
-                st.write(tour_cap)
-                st.write(tour_name)
                 submit = st.form_submit_button(
                     "Add tour",
                     on_click=lambda: handle_add_new_tour(
                         cursor,
                         st.session_state.tour_name,
                         st.session_state.tour_cap,
-                        habitat_id,
+                        all_habitat[st.session_state.habitat_id],
                     ),
                 )
-            st.write(st.session_state.sql_result)
 
         case "Modify Tour":
             st.subheader("Modify Tour :walking:")
             st.write("You can only modify tours that you're managing.")
             # Select tour_id
-            all_tours = tour_guide.get_tour_id(cursor)
-            # all_tours = dict(result)
+            result = tour_guide.get_tour_id(cursor)
+            all_tours = dict(result)
 
             # Create a form to collect input
             with st.form("modify_tour_form"):
                 # Input tour id
-                tour_id = st.selectbox("Select a tour id", all_tours, key="tour_id")
+                tour_id = st.selectbox("Select a tour", all_tours, key="tour_id")
                 # Input tour name
                 tour_name = st.text_input("New Tour name: ", key="tour_name")
                 # Input tour capacity
@@ -577,29 +577,27 @@ def render_tour_guide_options():
                     "Modify tour",
                     on_click=lambda: handle_modify_tour(
                         cursor,
-                        st.session_state.tour_id,
+                        all_tours[st.session_state.tour_id],
                         st.session_state.tour_name,
                         st.session_state.tour_cap,
                     ),
                 )
 
-            st.write("st.session_state.sql_result")
-
         case "Modify Habitat associated with Tour":
             st.subheader("Modify Habitat associated with Tour :guide_dog:")
             st.write("You can only modify tours that you're managing.")
-            # Select tour_id
-            all_tours = tour_guide.get_tour_id(cursor)
-            # all_tours = dict(result)
+            # Select tour
+            result = tour_guide.get_tour_id(cursor)
+            all_tours = dict(result)
 
-            # Select habitat id
-            all_habitat = tour_guide.get_habitat_id(cursor)
-            # all_habitat = dict(result)
+            # Select habitat
+            result = tour_guide.get_habitat_id(cursor)
+            all_habitat = dict(result)
 
             # Create a form to collect input
             with st.form("modify_tour_habitat_form"):
                 # Input tour id
-                tour_id = st.selectbox("Select a tour id", all_tours, key="tour_id")
+                tour_id = st.selectbox("Select a tour", all_tours, key="tour_id")
                 # Input habitat id
                 habitat_id = st.selectbox(
                     "Select a habitat", all_habitat, key="habitat_id"
@@ -609,19 +607,17 @@ def render_tour_guide_options():
                     "Modify tour habitat",
                     on_click=lambda: handle_modify_tour_sees(
                         cursor,
-                        st.session_state.tour_id,
-                        st.session_state.habitat_id,
+                        all_tours[st.session_state.tour_id],
+                        all_habitat[st.session_state.habitat_id],
                     ),
                 )
-
-            st.write(st.session_state.sql_result)
 
         case "Record completed tour":
             st.subheader("Record a tour that's completed :white_check_mark:")
             st.write("You can only complete tours that you're guiding.")
             # Select tour_id
-            all_tours = tour_guide.get_tour_id(cursor)
-            # all_tours = dict(result)
+            result = tour_guide.get_tour_id(cursor)
+            all_tours = dict(result)
 
             # Create a form to collect input
             with st.form("modify_tour_habitat_form"):
@@ -632,13 +628,9 @@ def render_tour_guide_options():
                     "Complete tour",
                     on_click=lambda: handle_provide_tour(
                         cursor,
-                        st.session_state.tour_id,
+                        all_tours[st.session_state.tour_id],
                     ),
                 )
-
-            st.write(
-                "Successfully completed tours for all the tickets with the specified tour"
-            )
 
 
 def render_visitor_options():
@@ -650,6 +642,13 @@ def main():
 
     if not st.session_state.isLogin:
         login_widget()
+        if st.session_state.error != "":
+            with st.form("error_form"):
+                st.warning("MYSQL Error: {}".format(st.session_state.error), icon="⚠️")
+                submit = st.form_submit_button(
+                    "Clear error message",
+                    on_click=lambda: clear_error(),
+                )
     else:
         match st.session_state.role:
             case "admin":

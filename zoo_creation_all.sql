@@ -14,7 +14,7 @@ CREATE TABLE employee (
 
 # -------------  Tour & Tickets ----------------
 
-CREATE TABLE tour(tour_id INT auto_increment PRIMARY KEY, Tname VARCHAR(30), max_cap INT, guide_ssn	 CHAR(11),
+CREATE TABLE tour(tour_id INT auto_increment PRIMARY KEY, Tname VARCHAR(30) NOT NULL UNIQUE, max_cap INT, guide_ssn	 CHAR(11),
 	FOREIGN KEY(guide_ssn) references employee(ssn) ON UPDATE CASCADE ON DELETE SET NULL);
 
 
