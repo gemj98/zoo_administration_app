@@ -18,8 +18,12 @@ def runMysqlScript(script_path):
         )
 
 
-# Create database
-runMysqlScript("zoo_creation_all.sql")
+# Create DB tables
+runMysqlScript("tables_creation.sql")
+# Create animal check trigger
+runMysqlScript("animal_check_trigger.sql")
+# Load initial data
+runMysqlScript("load_initial_data.sql")
 
 db = mysql.connector.connect(**DBconfig)
 cursor = db.cursor()
