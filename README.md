@@ -17,7 +17,7 @@ config = {
 }
 ```
 
-- Run create_database.py to create the database and populate with initial data. users into zoo database.
+- Run create_database.py to create the database and populate with initial data.
 - To run streamlit app use:
 
 ```
