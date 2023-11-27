@@ -18,6 +18,11 @@ config = {
 ```
 
 - Run DB_App/create_database.py to create the database and populate with initial data.
+- ONLY IF ERROR while running DB_App/create_database.py. Procede to run the following SQL scrypts manually:
+  - tables_creation.sql
+  - animal_check_trigger.sql
+  - load_initial_data.sql
+  - Run create_users.py
 - To run streamlit app use:
 
 ```

@@ -97,3 +97,10 @@ mysql.connector.errors.ProgrammingError: 1064 (42000): You have an error in your
 2023-11-26 20:07:00 {SQL.animal_habitat_queries} [INFO] Updating habitat temperature for habitat_id=4: Success
 2023-11-26 20:07:06 {SQL.animal_habitat_queries} [INFO] Updating habitat temperature for habitat_id=3: Success
 2023-11-26 20:07:10 {authenticator} [INFO] Logout
+2023-11-26 20:41:08 {authenticator} [INFO] Creating new user: Success
+2023-11-26 20:41:08 {authenticator} [INFO] Creating new user: Success
+2023-11-26 20:41:09 {authenticator} [INFO] Creating new user: Success
+2023-11-26 20:41:09 {authenticator} [INFO] Creating new user: Success
+2023-11-26 20:41:09 {authenticator} [INFO] Creating new user: Success
+2023-11-26 20:41:09 {authenticator} [INFO] Creating new user: Success
+2023-11-26 20:41:10 {authenticator} [INFO] Creating new user: Success
