@@ -1,9 +1,9 @@
 # SJSU CMPE 138 FALL 2023 TEAM10
 
-from authenticator import Authenticator
 import mysql.connector
-from config import config as DBconfig
 import subprocess
+from authenticator import Authenticator
+from config import config as DBconfig
 
 
 def runMysqlScript(script_path):
@@ -19,11 +19,11 @@ def runMysqlScript(script_path):
 
 
 # Create DB tables
-runMysqlScript("tables_creation.sql")
+runMysqlScript("SQL/tables_creation.sql")
 # Create animal check trigger
-runMysqlScript("animal_check_trigger.sql")
+runMysqlScript("SQL/animal_check_trigger.sql")
 # Load initial data
-runMysqlScript("load_initial_data.sql")
+runMysqlScript("SQL/load_initial_data.sql")
 
 db = mysql.connector.connect(**DBconfig)
 cursor = db.cursor()

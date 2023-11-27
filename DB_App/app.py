@@ -1,15 +1,19 @@
 # SJSU CMPE 138 FALL 2023 TEAM10
+import os
+import sys
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 import streamlit as st
 import mysql.connector
 import pandas as pd
 from authenticator import Authenticator
 from config import config as DBconfig
-import queries.vet_queries as vet
-import queries.admin_queries as admin
-import queries.animal_habitat_queries as animalHab
-import queries.security as security
-import queries.tour_guide as tour_guide
+from SQL import vet_queries as vet
+from SQL import admin_queries as admin
+from SQL import animal_habitat_queries as animalHab
+from SQL import security as security
+from SQL import tour_guide as tour_guide
 
 import numpy as np
 
@@ -492,7 +496,7 @@ def render_habitat_manager_options():
             result = animalHab.get_habitat(cursor)
             habitats = dict(result)
             options = [word.capitalize() for word in list(habitats)]
-            habitat = st.selectbox("Select a habitat", options).lower()
+            habitat = st.selectbox("Select a habitat", options, key="habitat").lower()
 
             # Display current temperature
             result = animalHab.get_habitat_temp(cursor, habitats[habitat])
@@ -511,7 +515,9 @@ def render_habitat_manager_options():
                 submit = st.form_submit_button(
                     "Update temperature",
                     on_click=lambda: handle_update_temperature(
-                        cursor, habitat_id=habitats[habitat], temperature=temp
+                        cursor,
+                        habitat_id=habitats[st.session_state.habitat.lower()],
+                        temperature=st.session_state.temperature,
                     ),
                 )
 

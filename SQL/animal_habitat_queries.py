@@ -10,10 +10,11 @@ logger.setLevel(logging.DEBUG)
 formatter = logging.Formatter(
     "%(asctime)s {%(name)s} [%(levelname)s] %(message)s", "%Y-%m-%d %H:%M:%S"
 )
-file_handler = logging.FileHandler("app_log.log")
+file_handler = logging.FileHandler("Log/app_log.log")
 file_handler.setLevel(logging.DEBUG)
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
+
 
 def get_species(cursor):
     get_species_query = """
@@ -22,6 +23,7 @@ def get_species(cursor):
     cursor.execute(get_species_query)
     result = cursor.fetchall()
     return result
+
 
 def insert_meal_record(cursor, specie_id):
     insert_meal_record_query = """
@@ -35,10 +37,9 @@ def insert_meal_record(cursor, specie_id):
         )
         return err.msg
     else:
-        logger.info(
-            "Inserting meal record for specie_id={}: Success".format(specie_id)
-        )
+        logger.info("Inserting meal record for specie_id={}: Success".format(specie_id))
         return ""
+
 
 def get_meal_records(cursor, specie_id):
     get_meal_records_query = """
@@ -47,7 +48,7 @@ def get_meal_records(cursor, specie_id):
     cursor.execute(get_meal_records_query, [specie_id])
     result = cursor.fetchall()
     return result
-    
+
 
 def get_status_options(cursor):
     get_status_options_query = """
@@ -56,7 +57,8 @@ def get_status_options(cursor):
     cursor.execute(get_status_options_query)
     result = cursor.fetchall()
     return result
-    
+
+
 def get_animals_from_specie(cursor, specie_id):
     get_species_single_query = """
     SELECT Aname, animal_id FROM animal WHERE specie_id=%s;
@@ -65,6 +67,7 @@ def get_animals_from_specie(cursor, specie_id):
     result = cursor.fetchall()
     return result
 
+
 def get_animal_status(cursor, animal_id):
     get_animal_status_query = """
     SELECT status_name FROM animal_status WHERE status_id IN (SELECT training_status FROM animal WHERE animal_id = %s);
@@ -72,7 +75,7 @@ def get_animal_status(cursor, animal_id):
     cursor.execute(get_animal_status_query, [animal_id])
     result = cursor.fetchall()
     return result
-    
+
 
 def update_animal_status(cursor, animal_id, status_id):
     try:
@@ -80,7 +83,10 @@ def update_animal_status(cursor, animal_id, status_id):
             update_animal_status_query = """
             UPDATE animal SET training_status = %s, trainer_ssn = %s WHERE animal_id = %s;
             """
-            cursor.execute(update_animal_status_query, [status_id, st.session_state.emp_ssn, animal_id])
+            cursor.execute(
+                update_animal_status_query,
+                [status_id, st.session_state.emp_ssn, animal_id],
+            )
         else:
             update_animal_status_query = """
             UPDATE animal SET training_status = %s, trainer_ssn = NULL WHERE animal_id = %s;
@@ -97,6 +103,7 @@ def update_animal_status(cursor, animal_id, status_id):
         )
         return ""
 
+
 def get_habitat(cursor):
     get_habitat_query = """
     SELECT Hname, habitat_id FROM habitat;
@@ -104,6 +111,7 @@ def get_habitat(cursor):
     cursor.execute(get_habitat_query)
     result = cursor.fetchall()
     return result
+
 
 def get_habitat_temp(cursor, habitat_id):
     get_habitat_temp_query = """
@@ -113,6 +121,7 @@ def get_habitat_temp(cursor, habitat_id):
     result = cursor.fetchall()
     return result
 
+
 def update_habitat_temp(cursor, habitat_id, temp):
     update_habitat_temp_query = """
     UPDATE habitat SET temperature = %s WHERE habitat_id = %s
@@ -121,22 +130,13 @@ def update_habitat_temp(cursor, habitat_id, temp):
         cursor.execute(update_habitat_temp_query, [temp, habitat_id])
     except mysql.connector.Error as err:
         logger.error(
-            "Updating habitat temperature for habitat_id={}: {}".format(habitat_id, err.msg)
+            "Updating habitat temperature for habitat_id={}: {}".format(
+                habitat_id, err.msg
+            )
         )
         return err.msg
     else:
-        logger.error(
+        logger.info(
             "Updating habitat temperature for habitat_id={}: Success".format(habitat_id)
         )
         return ""
-
-
-
-
-
-
-
-
-
-
-    

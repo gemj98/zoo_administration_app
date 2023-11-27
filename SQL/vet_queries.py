@@ -10,7 +10,7 @@ logger.setLevel(logging.DEBUG)
 formatter = logging.Formatter(
     "%(asctime)s {%(name)s} [%(levelname)s] %(message)s", "%Y-%m-%d %H:%M:%S"
 )
-file_handler = logging.FileHandler("app_log.log")
+file_handler = logging.FileHandler("Log/app_log.log")
 file_handler.setLevel(logging.DEBUG)
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
