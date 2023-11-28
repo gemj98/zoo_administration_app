@@ -14,7 +14,7 @@ INSERT INTO employee (ssn, Ename, position) values
 	('377-24-8838', 'Glen Garcia', 'security'),
 	('593-63-0610', 'Forrester Evans', 'tour_guide'),
 	('761-60-4472', 'Sibelle Collins', 'admin'),
-    ('456-21-9872', 'John Doe', 'tour_guide');
+    ('456-21-9872', 'Jane Doe', 'tour_guide');
     
 /*
 	('683-66-8443', 'Meaghan Dunphie', 'veterinarian'),
@@ -25,11 +25,11 @@ INSERT INTO employee (ssn, Ename, position) values
 	('697-84-7388', 'Clarice Loidl', 'trainer');
 */
   
-INSERT INTO habitat (Hname, area, temperature, manager_ssn) values 
-	('carivores', 195.4, 64, '628-43-7850'),
-	('herbivores', 250.7, 64, '628-43-7850'),
-    ('reptiles', 80.7, 75, '362-78-0387'),
-    ('aquarium', 62.4, 78, '362-78-0387');
+INSERT INTO habitat (Hname, area, temperature, manager_ssn, population) values 
+	('carivores', 195.4, 64, '628-43-7850', 3),
+	('herbivores', 250.7, 64, '628-43-7850', 5),
+    ('reptiles', 80.7, 75, '362-78-0387', 5),
+    ('aquarium', 62.4, 78, '362-78-0387', 37);
 
 # weight in lbs, height in inch.
 insert into specie (common_name, population, diet, life_expectancy, avg_weight, avg_size, habitat_id)

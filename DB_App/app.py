@@ -16,6 +16,17 @@ from SQL import security as security
 from SQL import tour_guide as tour_guide
 
 import numpy as np
+import logging
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+formatter = logging.Formatter(
+    "%(asctime)s {%(name)s} [%(levelname)s] %(message)s", "%Y-%m-%d %H:%M:%S"
+)
+file_handler = logging.FileHandler("Log/app_log.log")
+file_handler.setLevel(logging.DEBUG)
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
 
 db = mysql.connector.connect(**DBconfig)
 cursor = db.cursor()
@@ -102,7 +113,13 @@ def handle_sql_query(db, sql_query):
     (st.session_state.sql_result, st.session_state.error) = admin.run_query(
         db, sql_query
     )
-    db.commit()
+    try:
+        db.commit()
+    except Exception as err:
+        logger.exception("Commit custom sql query: {}".format(err))
+        st.session_state.error = err
+    else:
+        logger.info("Commit custom sql query: Success")
 
 
 def handle_add_new_tour(cursor, tour_name, tour_cap, habitat_id):
@@ -174,7 +191,7 @@ def render_admin_options():
             st.subheader("Run a custom query 👨🏻‍💻")
             with st.form("sql_form"):
                 # Input sql query
-                dose = st.text_input("Write an SQL Query", key="sql_query")
+                dose = st.text_area("Write an SQL Query", key="sql_query")
 
                 submit = st.form_submit_button(
                     "Run query",
