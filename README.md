@@ -17,7 +17,12 @@ config = {
 }
 ```
 
-- Run DB_App/create_database.py to create the database and populate with initial data.
+- To create the database and populate with initial data use:
+
+```
+python DB_App/create_database.py
+```
+
 - ONLY IF ERROR while running DB_App/create_database.py. Procede to run the following SQL scrypts manually:
   - tables_creation.sql
   - animal_check_trigger.sql

@@ -113,13 +113,7 @@ def handle_sql_query(db, sql_query):
     (st.session_state.sql_result, st.session_state.error) = admin.run_query(
         db, sql_query
     )
-    try:
-        db.commit()
-    except Exception as err:
-        logger.exception("Commit custom sql query: {}".format(err))
-        st.session_state.error = err
-    else:
-        logger.info("Commit custom sql query: Success")
+    db.commit()
 
 
 def handle_add_new_tour(cursor, tour_name, tour_cap, habitat_id):
