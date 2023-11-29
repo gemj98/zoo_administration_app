@@ -1,0 +1,99 @@
+2023-11-26 19:50:13 {authenticator} [INFO] Creating new user: Success
+2023-11-26 19:50:13 {authenticator} [INFO] Creating new user: Success
+2023-11-26 19:50:13 {authenticator} [INFO] Creating new user: Success
+2023-11-26 19:50:14 {authenticator} [INFO] Creating new user: Success
+2023-11-26 19:50:14 {authenticator} [INFO] Creating new user: Success
+2023-11-26 19:50:14 {authenticator} [INFO] Creating new user: Success
+2023-11-26 19:50:14 {authenticator} [INFO] Creating new user: Success
+2023-11-26 19:50:55 {authenticator} [INFO] Login into app as role=veterinarian: Success
+2023-11-26 19:51:00 {SQL.vet_queries} [INFO] Inserting animal check for animal_id=1: Success
+2023-11-26 19:51:02 {SQL.vet_queries} [INFO] Inserting animal check for animal_id=1: Success
+2023-11-26 19:51:05 {SQL.vet_queries} [INFO] Inserting animal check for animal_id=3: Success
+2023-11-26 19:51:07 {SQL.vet_queries} [INFO] Inserting animal check for animal_id=3: Success
+2023-11-26 19:51:08 {SQL.vet_queries} [INFO] Inserting animal check for animal_id=3: Success
+2023-11-26 19:51:08 {SQL.vet_queries} [ERROR] Inserting animal check for animal_id=3: Duplicate entry '3-2023-11-26 19:51:08' for key 'animal_check.PRIMARY'
+2023-11-26 19:51:13 {SQL.vet_queries} [INFO] Inserting specie check for specie_id=7: Success
+2023-11-26 19:51:51 {SQL.vet_queries} [INFO] Inserting prescription for animal_id=1: Success
+2023-11-26 19:52:01 {SQL.vet_queries} [ERROR] Inserting prescription for animal_id=1: Duplicate entry '3-1-2023-11-26' for key 'prescription.PRIMARY'
+2023-11-26 19:52:06 {authenticator} [INFO] Logout
+2023-11-26 19:52:13 {authenticator} [INFO] Login into app as role=tour_guide: Success
+2023-11-26 19:52:35 {SQL.tour_guide} [INFO] Inserting tour for tour_name=Explore the jungle: Success
+2023-11-26 19:52:52 {SQL.tour_guide} [INFO] Modify tour for tour_id=5: Success
+2023-11-26 19:53:04 {SQL.tour_guide} [INFO] Modify tour_sees for tour_id=5: Success
+2023-11-26 19:53:10 {SQL.tour_guide} [INFO] Provide tour for tour_id=5: Success
+2023-11-26 19:53:16 {authenticator} [INFO] Logout
+2023-11-26 19:53:22 {authenticator} [INFO] Login into app as role=security: Success
+2023-11-26 19:53:42 {authenticator} [INFO] Logout
+2023-11-26 19:53:50 {authenticator} [INFO] Login into app as role=trainer: Success
+2023-11-26 19:54:02 {SQL.animal_habitat_queries} [INFO] Updating training status for animal_id=2: Success
+2023-11-26 19:54:05 {authenticator} [INFO] Logout
+2023-11-26 19:54:12 {authenticator} [INFO] Login into app: No user found
+2023-11-26 19:54:22 {authenticator} [INFO] Login into app as role=feeder: Success
+2023-11-26 19:54:27 {SQL.animal_habitat_queries} [INFO] Inserting meal record for specie_id=1: Success
+2023-11-26 19:54:30 {SQL.animal_habitat_queries} [INFO] Inserting meal record for specie_id=1: Success
+2023-11-26 19:54:30 {SQL.animal_habitat_queries} [ERROR] Inserting meal record for specie_id=1: Duplicate entry '1-2023-11-26 19:54:30' for key 'meal_records.PRIMARY'
+2023-11-26 19:54:32 {authenticator} [INFO] Logout
+2023-11-26 19:54:36 {authenticator} [INFO] Login into app: User and password do not match
+2023-11-26 19:54:39 {authenticator} [INFO] Login into app as role=habitat_manager: Success
+2023-11-26 19:54:45 {SQL.animal_habitat_queries} [ERROR] Updating habitat temperature for habitat_id=4: Data truncated for column 'temperature' at row 1
+2023-11-26 19:54:54 {SQL.animal_habitat_queries} [INFO] Updating habitat temperature for habitat_id=4: Success
+2023-11-26 19:54:59 {SQL.animal_habitat_queries} [INFO] Updating habitat temperature for habitat_id=1: Success
+2023-11-26 19:55:05 {SQL.animal_habitat_queries} [INFO] Updating habitat temperature for habitat_id=3: Success
+2023-11-26 19:55:09 {SQL.animal_habitat_queries} [INFO] Updating habitat temperature for habitat_id=1: Success
+2023-11-26 19:55:18 {SQL.animal_habitat_queries} [INFO] Updating habitat temperature for habitat_id=2: Success
+2023-11-26 19:55:22 {authenticator} [INFO] Logout
+2023-11-26 19:55:29 {authenticator} [INFO] Login into app as role=admin: Success
+2023-11-26 19:55:44 {SQL.admin_queries} [ERROR] Running custom query: 1096 (HY000): No tables used
+Traceback (most recent call last):
+  File "C:\Users\gemj9\anaconda3\envs\zoo_db\Lib\site-packages\mysql\connector\connection_cext.py", line 639, in cmd_query
+    self._cmysql.query(
+_mysql_connector.MySQLInterfaceError: No tables used
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\gemj9\zoo_database\SQL\admin_queries.py", line 24, in run_query
+    cursor.execute(sql_query)
+  File "C:\Users\gemj9\anaconda3\envs\zoo_db\Lib\site-packages\mysql\connector\cursor_cext.py", line 330, in execute
+    result = self._cnx.cmd_query(
+             ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\gemj9\anaconda3\envs\zoo_db\Lib\site-packages\mysql\connector\opentelemetry\context_propagation.py", line 77, in wrapper
+    return method(cnx, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\gemj9\anaconda3\envs\zoo_db\Lib\site-packages\mysql\connector\connection_cext.py", line 647, in cmd_query
+    raise get_mysql_exception(
+mysql.connector.errors.DatabaseError: 1096 (HY000): No tables used
+2023-11-26 19:55:56 {SQL.admin_queries} [INFO] Running custom query: Success
+2023-11-26 19:56:03 {SQL.admin_queries} [INFO] Running custom query: Success
+2023-11-26 19:56:11 {SQL.admin_queries} [INFO] Running custom query: Success
+2023-11-26 19:56:18 {SQL.admin_queries} [INFO] Running custom query: Success
+2023-11-26 19:56:56 {authenticator} [INFO] Creating new user: Success
+2023-11-26 19:57:02 {SQL.admin_queries} [ERROR] Running custom query: 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'user' at line 1
+Traceback (most recent call last):
+  File "C:\Users\gemj9\anaconda3\envs\zoo_db\Lib\site-packages\mysql\connector\connection_cext.py", line 639, in cmd_query
+    self._cmysql.query(
+_mysql_connector.MySQLInterfaceError: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'user' at line 1
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\gemj9\zoo_database\SQL\admin_queries.py", line 24, in run_query
+    cursor.execute(sql_query)
+  File "C:\Users\gemj9\anaconda3\envs\zoo_db\Lib\site-packages\mysql\connector\cursor_cext.py", line 330, in execute
+    result = self._cnx.cmd_query(
+             ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\gemj9\anaconda3\envs\zoo_db\Lib\site-packages\mysql\connector\opentelemetry\context_propagation.py", line 77, in wrapper
+    return method(cnx, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\gemj9\anaconda3\envs\zoo_db\Lib\site-packages\mysql\connector\connection_cext.py", line 647, in cmd_query
+    raise get_mysql_exception(
+mysql.connector.errors.ProgrammingError: 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'user' at line 1
+2023-11-26 19:57:09 {SQL.admin_queries} [INFO] Running custom query: Success
+2023-11-26 19:57:18 {authenticator} [INFO] Logout
+2023-11-26 20:03:04 {authenticator} [INFO] Login into app as role=feeder: Success
+2023-11-26 20:03:06 {authenticator} [INFO] Logout
+2023-11-26 20:06:26 {authenticator} [INFO] Login into app as role=habitat_manager: Success
+2023-11-26 20:06:56 {SQL.animal_habitat_queries} [INFO] Updating habitat temperature for habitat_id=2: Success
+2023-11-26 20:07:00 {SQL.animal_habitat_queries} [INFO] Updating habitat temperature for habitat_id=4: Success
+2023-11-26 20:07:06 {SQL.animal_habitat_queries} [INFO] Updating habitat temperature for habitat_id=3: Success
+2023-11-26 20:07:10 {authenticator} [INFO] Logout
