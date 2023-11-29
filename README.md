@@ -27,7 +27,8 @@ python DB_App/create_database.py
   - tables_creation.sql
   - animal_check_trigger.sql
   - load_initial_data.sql
-  - Run create_users.py
+  - Run ```python DB_App/create_users.py```
+
 - To run streamlit app use:
 
 ```
